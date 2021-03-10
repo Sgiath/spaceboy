@@ -19,3 +19,10 @@
   - [ ] Gemini files
   - [ ] ANSI files (maybe?)
   - [ ] other MIME types ?
+
+## License
+
+I added MIT license for git hosting to be happy but I don't believe in intellectual property
+rights and I don't claim any license for this software.
+
+Do whatever you want with it. I don't care.
