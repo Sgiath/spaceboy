@@ -1,0 +1,7 @@
+# Example gemlog
+
+=> / Home
+
+## Entries
+
+Such empty...

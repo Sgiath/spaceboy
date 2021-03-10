@@ -1,0 +1,11 @@
+/_build/
+/deps/
+/doc/
+/tmp/
+
+/example/_build/
+/example/deps/
+
+erl_crash.dump
+*.ez
+spaceboy-*.tar

@@ -1,0 +1,13 @@
+# Example
+
+=> / Home
+
+## Second level header
+
+* This is some list
+* And second bulletpoint
+
+## Some more links
+
+=> https://elixir-lang.org Elixir
+=> gemini://sgiath.dev/projects/spaceboy/
