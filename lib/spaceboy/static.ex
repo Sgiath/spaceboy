@@ -8,6 +8,10 @@ defmodule Spaceboy.Static do
 
   alias Spaceboy.Conn
 
+  @doc """
+  Render appropriate content for the path
+  """
+  @spec render(conn :: Conn.t(), Keyword.t()) :: Conn.t()
   def render(%Conn{path: path} = conn, opts \\ []) do
     # path relative to root dir
     file_path =

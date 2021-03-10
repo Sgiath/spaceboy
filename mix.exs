@@ -8,7 +8,6 @@ defmodule Spaceboy.MixProject do
       app: :spaceboy,
       version: @version,
       elixir: "~> 1.11",
-      preferred_cli_env: [docs: :docs],
       consolidate_protocols: Mix.env() != :test,
       deps: deps(),
       package: package(),
@@ -16,7 +15,7 @@ defmodule Spaceboy.MixProject do
       # Docs
       name: "Spaceboy",
       source_url: "https://git.sr.ht/~sgiath/spaceboy",
-      homepage_url: "gemini://sgiath.dev/projects/spaceboy/",
+      homepage_url: "https://hexdocs.pm/spaceboy/",
       description: """
       Spaceboy - Gemini server framework for Elixir
       Heavily inspired by Phoenix. Heavily simplified.
@@ -38,21 +37,20 @@ defmodule Spaceboy.MixProject do
       {:mime, "~> 1.5"},
       {:typed_struct, "~> 0.2"},
 
-      # Docs dependencies (for links to work properly)
-      {:ex_doc, "~> 0.22", only: :docs},
-      {:plug, "~> 1.11", only: :docs, runtime: false}
+      # Docs dependencies
+      {:ex_doc, "~> 0.22", only: :dev}
     ]
   end
 
   defp package do
     [
       maintainers: ["Sgiath"],
-      licences: ["MIT"],
+      licenses: ["MIT"],
       links: %{
         "sourcehut" => "https://git.sr.ht/~sgiath/spaceboy",
-        "gemini specs" => "gemini://gemini.circumlunar.space/"
+        "gemini specs" => "https://gemini.circumlunar.space/"
       },
-      files: ~w(lib priv mix.exs .formatter.exs README.md)
+      files: ~w(lib mix.exs .formatter.exs README.md)
     ]
   end
 
@@ -64,7 +62,11 @@ defmodule Spaceboy.MixProject do
       formatters: ["html", "epub"],
       extras: extras(),
       groups_for_extras: groups_for_extras(),
-      groups_for_modules: groups_for_modules()
+      groups_for_modules: groups_for_modules(),
+      groups_for_functions: groups_for_functions(),
+      deps: [
+        plug: "https://hexdocs.pm/plug/"
+      ]
     ]
   end
 
@@ -81,10 +83,31 @@ defmodule Spaceboy.MixProject do
 
   defp groups_for_modules do
     [
+      Server: [
+        Spaceboy.Server,
+        Spaceboy.Router
+      ],
       Middlewares: [
         Spaceboy.Middleware,
         Spaceboy.Middleware.Logger
+      ],
+      Internals: [
+        Spaceboy.Conn,
+        Spaceboy.Header,
+        Spaceboy.Static
       ]
+    ]
+  end
+
+  defp groups_for_functions do
+    [
+      Input: &(&1[:category] == :input),
+      Success: &(&1[:category] == :success),
+      Redirect: &(&1[:category] == :redirect),
+      "Temporary Failure": &(&1[:category] == :temporary_failure),
+      "Permanent Failure": &(&1[:category] == :permanent_failure),
+      "Client Certificate Required": &(&1[:category] == :certificate),
+      Utils: &(&1[:category] == :utils)
     ]
   end
 end

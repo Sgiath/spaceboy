@@ -9,21 +9,7 @@ defmodule Spaceboy.Router do
   `Spaceboy.Router` is usually last middleware in your `Spaceboy.Server` but it is not requirement.
   """
 
-  @doc """
-  Splits path into it's segments
-
-  ## Examples
-
-      iex> Spaceboy.Router.split("/foo/bar")
-      ["foo", "bar"]
-
-      iex> Spaceboy.Router.split("/:id/*")
-      [":id", "*"]
-
-      iex> Spaceboy.Router.split("/foo//*_bar")
-      ["foo", "*_bar"]
-
-  """
+  @doc false
   @spec split(String.t()) :: [String.t()]
   def split(path) do
     path
@@ -31,30 +17,8 @@ defmodule Spaceboy.Router do
     |> Enum.filter(fn segment -> segment != "" end)
   end
 
-  @doc """
-  Converts path segments to AST pattern representation
-
-  ## Examples
-
-      iex> Spaceboy.Router.convert(["foo", "bar"])
-      ["foo", "bar"]
-
-      iex> Spaceboy.Router.convert(["foo", ":bar"])
-      ["foo", {:_bar, [], nil}]
-
-      iex> Spaceboy.Router.convert(["foo", ":bar", "baz"])
-      ["foo", {:_bar, [], nil}, "baz"]
-
-      iex> Spaceboy.Router.convert(["foo", "*bar"])
-      [{:|, [], ["foo", {:_bar, [], nil}]}]
-
-      iex> Spaceboy.Router.convert(["foo", "bar", "*baz"])
-      ["foo", {:|, [], ["bar", {:_baz, [], nil}]}]
-
-      iex> Spaceboy.Router.convert(["foo", ":bar", "foobar", "*baz"])
-      ["foo", {:_bar, [], nil}, {:|, [], ["foobar", {:_baz, [], nil}]}]
-
-  """
+  @doc false
+  @spec convert([String.t()], [String.t() | tuple()]) :: [String.t() | tuple()]
   def convert(segments, acc \\ [])
 
   def convert([":" <> segment | segments], acc) do

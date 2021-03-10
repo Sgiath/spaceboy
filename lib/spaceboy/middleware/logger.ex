@@ -1,5 +1,16 @@
 defmodule Spaceboy.Middleware.Logger do
-  @moduledoc false
+  @moduledoc """
+  Example middleware which provides simple logging for processed request.
+
+  Use in your `Spaceboy.Server` implementation as:
+
+  ```
+  middleware Spaceboy.Middleware.Logger
+  ```
+
+  Since this middleware is measuring the time it takes server to process the response it is
+  recommneded to include it as first middleware so it is measuring everything.
+  """
 
   @behaviour Spaceboy.Middleware
 
