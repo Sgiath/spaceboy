@@ -64,7 +64,13 @@ defmodule Spaceboy.Handler do
           end
         else
           Logger.error("Got request out of spec: #{inspect(data)}")
-          :ok = transport.close(socket)
+
+          data =
+            "Invalid protocol"
+            |> Header.bad_request()
+            |> Header.format()
+
+          do_send(conn, data)
         end
 
       {:ssl_closed, _socket} ->
@@ -86,7 +92,12 @@ defmodule Spaceboy.Handler do
         Exception.format(:error, err, __STACKTRACE__)
       ])
 
-      do_send(conn, Header.format(Header.permanent_failure("Internal Server Error")))
+      data =
+        "Internal Server Error"
+        |> Header.permanent_failure()
+        |> Header.format()
+
+      do_send(conn, data)
   end
 
   # Check if request is according to specs

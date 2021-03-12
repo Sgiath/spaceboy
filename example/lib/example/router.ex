@@ -3,11 +3,11 @@ defmodule Example.Router do
 
   alias Example.Controller
 
-  route("/", Controller, :index)
-  route("/user", Controller, :users)
-  route("/user/:user_id", Controller, :user)
-  route("/cert", Controller, :cert)
-  route("/file", Controller, :file)
+  route "/", Controller, :index
+  route "/user", Controller, :users
+  route "/user/:user_id", Controller, :user
+  route "/cert", Controller, :cert
+  route "/file", Controller, :file
 
-  static("/static", "priv/static")
+  static "/static", "priv/static"
 end
