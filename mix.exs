@@ -1,7 +1,7 @@
 defmodule Spaceboy.MixProject do
   use Mix.Project
 
-  @version "0.1.0"
+  @version "0.1.1"
 
   def project do
     [
@@ -57,7 +57,6 @@ defmodule Spaceboy.MixProject do
   defp docs do
     [
       source_url_patter: "https://git.sr.ht/~sgiath/spaceboy/tree/master/item/%{path}#L%{line}",
-      main: "Spaceboy.Server",
       # extra_section: "Guides",
       formatters: ["html", "epub"],
       extras: extras(),
@@ -82,14 +81,17 @@ defmodule Spaceboy.MixProject do
     [
       Server: [
         Spaceboy.Server,
+        Spaceboy.Conn,
         Spaceboy.Router
       ],
       Middlewares: [
         Spaceboy.Middleware,
         Spaceboy.Middleware.Logger
       ],
+      Utils: [
+        Spaceboy.PeerCert
+      ],
       Internals: [
-        Spaceboy.Conn,
         Spaceboy.Header,
         Spaceboy.Static
       ]

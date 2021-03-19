@@ -55,6 +55,8 @@ defmodule Spaceboy.Conn do
   alias Spaceboy.Header
 
   typedstruct module: Unfetched do
+    @moduledoc false
+
     @typedoc """
     A struct used as default on unfetched fields.
 
@@ -209,10 +211,16 @@ defmodule Spaceboy.Conn do
     resp(conn, Header.client_certificate_required(prompt))
   end
 
+  @doc """
+  Fetch query params - decode `query_string` to map()
+  """
+  @spec fetch_query_params(conn :: t) :: t
   def fetch_query_params(%__MODULE__{query_string: query} = conn) do
     fetch_params(%__MODULE__{conn | query_params: URI.decode_query(query)})
   end
 
+  @doc false
+  @spec fetch_params(conn :: t) :: t
   def fetch_params(%__MODULE__{query_params: %Unfetched{}, path_params: params} = conn) do
     %__MODULE__{conn | params: params}
   end

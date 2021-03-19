@@ -5,8 +5,8 @@ The [Phoenix framework](https://www.phoenixframework.org/) for
 
 ## Setup
 
-I recommend you to look at `example/` folder which contains simple application you can use as
-starting point.
+I recommend you to look at `example/` folder which contains simple application
+you can use as starting point.
 
 ## Features
 

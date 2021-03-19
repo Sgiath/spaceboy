@@ -2,14 +2,15 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   @shortdoc "Generates self-signed certificate"
 
   @moduledoc """
-  Generates self-signed certificate for localhost and saves it at priv/ssl/
+  Generates self-signed certificate for localhost and saves it at `priv/ssl/`
 
   Currently uses EC `prime256v1` as it is the most widely supported EC algorithm. But once Erlang
-  adds support for ED25519 curve I will switch it to this one.
+  adds support for `ED25519` curve I will switch it to this one for security reasons and to promote
+  good practices.
 
   https://github.com/erlang/otp/issues/4637
 
-  When first used it copies default openssl.cnf to your `priv/ssl/` directory and generates
+  When first used it copies default `openssl.cnf` to your `priv/ssl/` directory and generates
   self-sgined certificate for `localhost` and `127.0.0.1`. If you want certificate for different
   hosts and IPs you can edit the generated `priv/ssl/openssl.cnf` file manually, generate new
   certificate and it will use those values instead.
