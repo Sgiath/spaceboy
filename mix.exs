@@ -26,7 +26,7 @@ defmodule Spaceboy.MixProject do
 
   def application do
     [
-      extra_applications: [:logger, :crypto, :public_key]
+      extra_applications: [:logger, :ssl, :public_key]
     ]
   end
 
@@ -38,7 +38,7 @@ defmodule Spaceboy.MixProject do
       {:typed_struct, "~> 0.2"},
 
       # Docs dependencies
-      {:ex_doc, "~> 0.22", only: :dev}
+      {:ex_doc, "~> 0.24", only: :dev, runtime: false}
     ]
   end
 
@@ -47,8 +47,8 @@ defmodule Spaceboy.MixProject do
       maintainers: ["Sgiath"],
       licenses: ["WTFPL"],
       links: %{
-        "sourcehut" => "https://git.sr.ht/~sgiath/spaceboy",
-        "gemini specs" => "https://gemini.circumlunar.space/"
+        "SourceHut project" => "https://sr.ht/~sgiath/spaceboy/",
+        "Gemini specs" => "https://gemini.circumlunar.space/"
       },
       files: ~w(lib mix.exs .formatter.exs README.md)
     ]
@@ -56,17 +56,14 @@ defmodule Spaceboy.MixProject do
 
   defp docs do
     [
-      source_ref: "v#{@version}",
-      # main: "overview",
+      source_url_patter: "https://git.sr.ht/~sgiath/spaceboy/tree/master/item/%{path}#L%{line}",
+      main: "Spaceboy.Server",
       # extra_section: "Guides",
       formatters: ["html", "epub"],
       extras: extras(),
       groups_for_extras: groups_for_extras(),
       groups_for_modules: groups_for_modules(),
-      groups_for_functions: groups_for_functions(),
-      deps: [
-        plug: "https://hexdocs.pm/plug/"
-      ]
+      groups_for_functions: groups_for_functions()
     ]
   end
 

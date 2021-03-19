@@ -30,7 +30,7 @@ defmodule Example.Controller do
   end
 
   def users(%Conn{query_string: user} = conn) do
-    Logger.info("Saving user: #{user}")
+    Logger.info("Processing user: #{user}")
 
     Conn.redirect(conn, "/user/#{user}")
   end
@@ -38,15 +38,15 @@ defmodule Example.Controller do
   @doc """
   Page with URL parameter
   """
-  def user(%Conn{request_path: path} = conn) do
+  def user(%Conn{params: %{user_id: user_id}} = conn) do
     Conn.gemini(conn, """
     # Example user page
 
     => / Home
 
-    ## Path
+    ## User
     ```
-    #{path}
+    User ID: "#{user_id}"
     ```
     """)
   end

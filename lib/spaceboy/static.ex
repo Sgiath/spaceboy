@@ -13,7 +13,7 @@ defmodule Spaceboy.Static do
   Render appropriate content for the path
   """
   @spec render(conn :: Conn.t(), Keyword.t()) :: Conn.t()
-  def render(%Conn{path_params: %{"path" => path}} = conn, opts \\ []) do
+  def render(%Conn{params: %{path: path}} = conn, opts \\ []) do
     opts = normalize(opts)
 
     if File.dir?(Path.join(opts[:root] ++ path)) do
@@ -23,17 +23,17 @@ defmodule Spaceboy.Static do
     end
   end
 
-  defp render_dir(%Conn{path_params: %{"path" => path}} = conn, opts) do
+  defp render_dir(%Conn{params: %{path: path}} = conn, opts) do
     fs_path = Path.join(opts[:root] ++ path)
 
     cond do
       File.exists?(fs_path <> "/index.gmi") ->
+        # Index file
         opts = Map.put(opts, :mime, "text/gemini")
 
-        conn = %{
-          conn
-          | path_params: %{"path" => Enum.reverse(["index.gmi" | Enum.reverse(path)])}
-        }
+        # Append "index.gmi" to the path
+        path = Enum.reverse(["index.gmi" | Enum.reverse(path)])
+        conn = %Conn{conn | params: %{conn.params | path: path}}
 
         render_file(conn, opts)
 
@@ -41,7 +41,7 @@ defmodule Spaceboy.Static do
         files =
           fs_path
           |> File.ls!()
-          |> Enum.map(fn file -> "=> /#{Path.join(opts[:prefix] ++ path)}/#{file}" end)
+          |> Enum.map(&"=> /#{Path.join(opts[:prefix] ++ path)}/#{&1}")
           |> Enum.join("\n")
 
         Conn.gemini(conn, dir_template(path, files))
@@ -51,7 +51,7 @@ defmodule Spaceboy.Static do
     end
   end
 
-  defp render_file(%Conn{path_params: %{"path" => path}} = conn, opts) do
+  defp render_file(%Conn{params: %{path: path}} = conn, opts) do
     fs_path = Path.join(opts[:root] ++ path)
 
     case opts[:mime] do

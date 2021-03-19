@@ -95,6 +95,7 @@ defmodule Spaceboy.Router do
     end
   end
 
+  # Build pattern and params AST
   defp build(path) do
     path
     |> Utils.split()

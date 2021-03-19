@@ -4,6 +4,6 @@ defmodule Spaceboy.Utils do
   def split(path) do
     path
     |> String.split("/")
-    |> Enum.filter(fn segment -> segment != "" end)
+    |> Enum.filter(&(&1 != ""))
   end
 end

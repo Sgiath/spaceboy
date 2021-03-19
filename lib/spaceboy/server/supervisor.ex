@@ -16,6 +16,8 @@ defmodule Spaceboy.Server.Supervisor do
       |> default()
       |> Keyword.merge(opts)
 
+    check_certs(opts)
+
     case Supervisor.start_link(__MODULE__, opts, name: module) do
       {:ok, _} = ok ->
         log_access_url(module, opts)
@@ -49,5 +51,29 @@ defmodule Spaceboy.Server.Supervisor do
   defp log_access_url(mod, opts) do
     Logger.info("Server #{inspect(mod)} started at 0.0.0.0:#{opts[:port]} (gemini)")
     Logger.info("Access #{inspect(mod)} at gemini://#{opts[:host]}")
+  end
+
+  defp check_certs(opts) do
+    unless File.exists?(opts[:certfile]) and File.exists?(opts[:keyfile]) do
+      IO.puts("""
+      #{IO.ANSI.red()}
+      \nTLS certificate and private key at location "#{opts[:certfile]}" doesn't exists!
+      #{IO.ANSI.yellow()}
+      You can create one with:
+
+        mix spaceboy.gen.cert
+
+      Or you can change the location in configuration:
+
+        config #{inspect(opts[:otp_app])}, #{inspect(opts[:server])},
+          certfile: "path/to/cert/file.pem",
+          keyfile: "path/to/key/file.pem"
+      #{IO.ANSI.red()}
+      Exiting because Gemini protocol requires TLS Certificate!
+      #{IO.ANSI.reset()}
+      """)
+
+      System.stop(1)
+    end
   end
 end

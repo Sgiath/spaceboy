@@ -19,7 +19,7 @@ starting point.
   - [ ] README
   - [x] in code documentation
   - [ ] guides and instructions
-- [ ] advanced work with client certificates
+- [x] advanced work with client certificates
 - [ ] telemetry
 - [ ] easy statistics for servers (number of visits, etc.)
 - [ ] simple integration with Ecto for building more complex applications

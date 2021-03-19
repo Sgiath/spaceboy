@@ -34,7 +34,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
     gen_cert()
 
     IO.puts("""
-
+    \n#{IO.ANSI.yellow()}#{IO.ANSI.bright()}# TLS Certificate#{IO.ANSI.reset()}
     Generated private key and self-signed certificate:
 
       - #{@key_path}
@@ -48,6 +48,12 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
 
     unless File.exists?(@cnf_path) do
       File.cp(@cnf_default, @cnf_path)
+
+      IO.puts("""
+      \n#{IO.ANSI.yellow()}#{IO.ANSI.bright()}# OpenSSL Config#{IO.ANSI.reset()}
+      Created default openssl config file at "#{@cnf_path}".
+      It won't be overwriten so you can edit it will be used on subsequent cert generations.
+      """)
     end
   end
 

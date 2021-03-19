@@ -1,17 +1,18 @@
 defmodule Spaceboy.Router.Builder do
   @moduledoc false
 
-  @doc false
   def convert(segments, acc \\ [], params \\ [])
 
   def convert([":" <> segment | segments], acc, params) do
-    acc = [{String.to_atom(segment), [], nil} | acc]
+    segment = String.to_atom(segment)
 
-    convert(segments, acc, [param(segment) | params])
+    convert(segments, [{segment, [], nil} | acc], param(params, segment))
   end
 
   def convert(["*" <> segment | []], acc, params) do
-    {glob(String.to_atom(segment), acc), build_params([param(segment) | params])}
+    segment = String.to_atom(segment)
+
+    {glob(segment, acc), params |> param(segment) |> build_params()}
   end
 
   def convert(["*" | []], acc, params), do: {glob(:_, acc), build_params(params)}
@@ -38,12 +39,12 @@ defmodule Spaceboy.Router.Builder do
   end
 
   # One param match AST
-  defp param(segment) do
-    {segment, {String.to_atom(segment), [], nil}}
+  defp param(params, segment) do
+    Keyword.put(params, segment, {segment, [], nil})
   end
 
   # Params map AST
-  defp build_params(p) do
-    {:%{}, [], p}
+  defp build_params(params) do
+    {:%{}, [], params}
   end
 end

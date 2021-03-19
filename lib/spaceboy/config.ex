@@ -1,7 +1,6 @@
 defmodule Spaceboy.Config do
   @moduledoc false
 
-  @spec trans_opts(Keyword.t()) :: map()
   def trans_opts(opts) do
     %{
       num_acceptors: 100,
@@ -11,7 +10,6 @@ defmodule Spaceboy.Config do
     }
   end
 
-  @spec ssl_opts(Keyword.t()) :: Keyword.t()
   def ssl_opts(opts) do
     [
       port: opts[:port],

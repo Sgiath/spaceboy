@@ -11,26 +11,27 @@ defmodule Spaceboy.Server do
   mix spaceboy.gen.cert
   ```
 
-  The default location for certificate is: `priv/ssl/` but you can change it to what ever path you
+  The default location for certificate is: `priv/ssl/` but you can change it to whatever path you
   want via configuration:
 
   ```elixir
   config :example, Example.Server,
     host: "localhost",
     port: 1965,
-    certfile: "priv/ssl/cert.pem,
-    keyfile: "priv/ssl/key.pem
+    certfile: "priv/ssl/cert.pem",
+    keyfile: "priv/ssl/key.pem"
   ```
 
-  or when starting your server in Application module (in case you need runtime configuration):
+  or when starting your server in Application module (in case you need programatically controlled
+  configuration):
 
   ```elixir
   def start(_type, _args) do
     config = [
       host: "localhost",
       port: 1965,
-      certfile: "priv/ssl/cert.pem,
-      keyfile: "priv/ssl/key.pem
+      certfile: "priv/ssl/cert.pem",
+      keyfile: "priv/ssl/key.pem"
     ]
 
     children = [

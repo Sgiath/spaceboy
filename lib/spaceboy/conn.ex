@@ -25,6 +25,10 @@ defmodule Spaceboy.Conn do
     - `:query_params` - fetched by `fetch_query_params/1`
     - `:params` - combined field of `:path_params` and `:query_params`
 
+  Those fields requires manual fetching because you don't always want to format e.g. query. If you
+  are using query for simple user input (e.g. username) and the query looks like `&my_username` you
+  actually don't want to fetch it and create params from it.
+
   ## Response fields
 
   You are supposed to set those values during request lifetime
@@ -51,7 +55,13 @@ defmodule Spaceboy.Conn do
   alias Spaceboy.Header
 
   typedstruct module: Unfetched do
-    field :aspect, :query_params
+    @typedoc """
+    A struct used as default on unfetched fields.
+
+    The `:aspect` key of the struct specifies what field is still unfetched.
+    """
+
+    field :aspect, :query_params | :path_params | :params
   end
 
   @type state :: :unset | :set | :set_file | :sent
