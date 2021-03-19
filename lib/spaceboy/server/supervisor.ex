@@ -3,6 +3,9 @@ defmodule Spaceboy.Server.Supervisor do
 
   use Supervisor
 
+  alias Spaceboy.Config
+  alias Spaceboy.Handler
+
   require Logger
 
   def start_link(module, opts \\ []) do
@@ -28,8 +31,8 @@ defmodule Spaceboy.Server.Supervisor do
       :ranch.child_spec(
         :gemini,
         :ranch_ssl,
-        Spaceboy.Config.trans_opts(opts),
-        Spaceboy.Handler,
+        Config.trans_opts(opts),
+        Handler,
         opts
       )
     ]
@@ -44,7 +47,7 @@ defmodule Spaceboy.Server.Supervisor do
   end
 
   defp log_access_url(mod, opts) do
-    Logger.info("Server #{inspect(mod)} started at 0.0.0.0:1965 (gemini)")
+    Logger.info("Server #{inspect(mod)} started at 0.0.0.0:#{opts[:port]} (gemini)")
     Logger.info("Access #{inspect(mod)} at gemini://#{opts[:host]}")
   end
 end

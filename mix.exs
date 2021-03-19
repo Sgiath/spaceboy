@@ -45,7 +45,7 @@ defmodule Spaceboy.MixProject do
   defp package do
     [
       maintainers: ["Sgiath"],
-      licenses: ["MIT"],
+      licenses: ["WTFPL"],
       links: %{
         "sourcehut" => "https://git.sr.ht/~sgiath/spaceboy",
         "gemini specs" => "https://gemini.circumlunar.space/"

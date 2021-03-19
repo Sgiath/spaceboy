@@ -25,11 +25,11 @@ defmodule Example.Controller do
   @doc """
   Page requiring user input and then redirecting to appropriate page
   """
-  def users(%Conn{query: nil} = conn) do
+  def users(%Conn{query_string: nil} = conn) do
     Conn.input(conn, "Enter username")
   end
 
-  def users(%Conn{query: user} = conn) do
+  def users(%Conn{query_string: user} = conn) do
     Logger.info("Saving user: #{user}")
 
     Conn.redirect(conn, "/user/#{user}")
@@ -38,7 +38,7 @@ defmodule Example.Controller do
   @doc """
   Page with URL parameter
   """
-  def user(%Conn{path: path} = conn) do
+  def user(%Conn{request_path: path} = conn) do
     Conn.gemini(conn, """
     # Example user page
 
@@ -54,16 +54,22 @@ defmodule Example.Controller do
   @doc """
   Page showing work with certificates
   """
-  def cert(%Conn{peer_cert: pc} = conn) do
-    if {:error, :no_peercert} == pc do
-      Conn.auth_required(conn)
-    else
-      Conn.gemini(conn, """
-      # Example certificate page
+  def cert(%Conn{peer_cert: :no_peercert} = conn) do
+    Conn.auth_required(conn)
+  end
 
-      Great! Certificate detected
-      """)
-    end
+  def cert(%Conn{peer_cert: pc} = conn) do
+    data = Spaceboy.PeerCert.rdn(pc)
+
+    Conn.gemini(conn, """
+    # Example certificate page
+
+    Great! Certificate detected:
+
+    ```
+    #{inspect(data)}
+    ```
+    """)
   end
 
   @doc """

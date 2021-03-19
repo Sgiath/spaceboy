@@ -7,39 +7,41 @@ defmodule Spaceboy.Static do
   """
 
   alias Spaceboy.Conn
+  alias Spaceboy.Utils
 
   @doc """
   Render appropriate content for the path
   """
   @spec render(conn :: Conn.t(), Keyword.t()) :: Conn.t()
-  def render(%Conn{path: path} = conn, opts \\ []) do
-    # path relative to root dir
-    file_path =
-      path
-      |> String.replace_leading(prefix(opts), "")
-      |> String.replace_suffix("/", "")
+  def render(%Conn{path_params: %{"path" => path}} = conn, opts \\ []) do
+    opts = normalize(opts)
 
-    if File.dir?(root(opts) <> file_path) do
-      render_dir(conn, file_path, opts)
+    if File.dir?(Path.join(opts[:root] ++ path)) do
+      render_dir(conn, opts)
     else
-      render_file(conn, file_path, opts)
+      render_file(conn, opts)
     end
   end
 
-  defp render_dir(%Conn{path: path} = conn, dir_path, opts) do
-    fs_path = root(opts) <> dir_path
+  defp render_dir(%Conn{path_params: %{"path" => path}} = conn, opts) do
+    fs_path = Path.join(opts[:root] ++ path)
 
     cond do
       File.exists?(fs_path <> "/index.gmi") ->
-        opts = Keyword.put(opts, :mime, "text/gemini")
+        opts = Map.put(opts, :mime, "text/gemini")
 
-        render_file(conn, dir_path <> "/index.gmi", opts)
+        conn = %{
+          conn
+          | path_params: %{"path" => Enum.reverse(["index.gmi" | Enum.reverse(path)])}
+        }
 
-      ls_dir?(opts) ->
+        render_file(conn, opts)
+
+      opts[:ls_dir?] ->
         files =
           fs_path
           |> File.ls!()
-          |> Enum.map(fn file -> "=> #{prefix(opts)}#{dir_path}/#{file}" end)
+          |> Enum.map(fn file -> "=> /#{Path.join(opts[:prefix] ++ path)}/#{file}" end)
           |> Enum.join("\n")
 
         Conn.gemini(conn, dir_template(path, files))
@@ -49,10 +51,10 @@ defmodule Spaceboy.Static do
     end
   end
 
-  defp render_file(conn, file_path, opts) do
-    fs_path = root(opts) <> file_path
+  defp render_file(%Conn{path_params: %{"path" => path}} = conn, opts) do
+    fs_path = Path.join(opts[:root] ++ path)
 
-    case mime(opts) do
+    case opts[:mime] do
       :guess ->
         Conn.file(conn, fs_path, MIME.from_path(fs_path))
 
@@ -60,7 +62,7 @@ defmodule Spaceboy.Static do
         Conn.file(conn, fs_path, mime)
 
       true ->
-        raise "Invalid MIME type. Expected :guess or binary. Got: #{inspect(mime(opts))}"
+        raise "Invalid MIME type. Expected :guess or binary. Got: #{inspect(opts[:mime])}"
     end
   end
 
@@ -73,19 +75,12 @@ defmodule Spaceboy.Static do
     """
   end
 
-  defp root(opts) do
-    opts
-    |> Keyword.fetch!(:root)
-    |> String.replace_suffix("/", "")
+  defp normalize(opts) do
+    %{
+      root: Utils.split(opts[:root]),
+      prefix: Utils.split(opts[:prefix]),
+      ls_dir?: Keyword.get(opts, :ls_dir?, true),
+      mime: Keyword.get(opts, :mime, "text/gemini")
+    }
   end
-
-  defp prefix(opts) do
-    opts
-    |> Keyword.fetch!(:prefix)
-    |> String.replace_suffix("/", "")
-  end
-
-  defp ls_dir?(opts), do: Keyword.get(opts, :ls_dir?, true)
-
-  defp mime(opts), do: Keyword.get(opts, :mime, "text/gemini")
 end

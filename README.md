@@ -1,6 +1,14 @@
 # Spaceboy
 
-## Supported features
+The [Phoenix framework](https://www.phoenixframework.org/) for
+[Gemini protocol](https://gemini.circumlunar.space/). Heavily simplified.
+
+## Setup
+
+I recommend you to look at `example/` folder which contains simple application you can use as
+starting point.
+
+## Features
 
 - [x] TLS communication
 - [x] routing

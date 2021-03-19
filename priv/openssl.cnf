@@ -1,0 +1,20 @@
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+x509_extensions = v3_req
+prompt = no
+
+[v3_req]
+basicConstraints = CA:false
+keyUsage = digitalSignature, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+# You can edit your common name, DNS names and IPs down bellow
+
+[req_distinguished_name]
+CN = Self-signed certificate
+
+[alt_names]
+IP.1 = 127.0.0.1
+DNS.1 = localhost

@@ -3,6 +3,7 @@ defmodule Spaceboy.Handler do
 
   alias Spaceboy.Conn
   alias Spaceboy.Header
+  alias Spaceboy.Utils
 
   require Logger
 
@@ -25,52 +26,77 @@ defmodule Spaceboy.Handler do
     - create `Spaceboy.Conn` struct
     - enter the connection loop
   """
-  def init(ref, transport, opts) do
-    server = Keyword.fetch!(opts, :server)
-
+  def init(ref, _transport, opts) do
+    # Establish connection
     {:ok, socket} = :ranch.handshake(ref)
-    peer_cert = :ssl.peercert(socket)
 
+    # Obtain connection info
+    {:ok, {peer_ip, _peer_port}} = :ssl.peername(socket)
+    {:ok, {_local_ip, port}} = :ssl.sockname(socket)
+    {_status, peer_cert} = :ssl.peercert(socket)
+
+    # Set active mode
+    :ok = :ranch_ssl.setopts(socket, active: :once)
+
+    # Create Conn struct
     conn = %Conn{
-      transport: transport,
-      socket: socket,
+      owner: self(),
+      port: port,
+      remote_ip: peer_ip,
       peer_cert: peer_cert
     }
 
-    loop(conn, server)
+    # Start loop
+    loop(conn, opts[:server])
   end
 
   @doc """
   Loop receiving request data as Elixir messages
   """
-  def loop(%Conn{socket: socket, transport: transport} = conn, server) do
-    :ok = transport.setopts(socket, active: :once)
-
+  def loop(%Conn{} = conn, server) do
     receive do
-      {:ssl, _socket, data} ->
-        if valid?(data) do
-          conn
-          |> parse_data(data)
-          |> server.call()
-          |> case do
-            %Conn{body: nil, file: nil, header: %Header{code: code}} = conn when code != 20 ->
-              do_send(conn, Header.format(conn.header))
+      {:ssl, socket, data} ->
+        try do
+          if valid?(data) do
+            conn
+            |> parse_data(data)
+            |> server.call()
+            |> case do
+              %Conn{state: :unset} ->
+                raise "Response not set"
 
-            %Conn{body: body, file: nil, header: %Header{code: 20}} = conn ->
-              do_send(conn, [Header.format(conn.header), body])
+              %Conn{state: :set, body: nil, header: %Header{code: code}} = conn when code != 20 ->
+                do_send(conn, socket, Header.format(conn.header))
 
-            %Conn{body: nil, file: file, header: %Header{code: 20}} = conn ->
-              do_send_file(conn, Header.format(conn.header), file)
+              %Conn{state: :set, body: body, header: %Header{code: 20} = header} = conn ->
+                do_send(conn, socket, [Header.format(header), body])
+
+              %Conn{state: :set_file, body: file, header: %Header{code: 20} = header} = conn ->
+                do_send_file(conn, socket, Header.format(header), file)
+            end
+          else
+            Logger.error("Got request out of spec: #{inspect(data)}")
+
+            data =
+              "Invalid protocol"
+              |> Header.bad_request()
+              |> Header.format()
+
+            do_send(conn, socket, data)
           end
-        else
-          Logger.error("Got request out of spec: #{inspect(data)}")
+        rescue
+          err ->
+            Logger.error([
+              "Internal Server Error\n\n",
+              Exception.format(:error, err, __STACKTRACE__)
+            ])
 
-          data =
-            "Invalid protocol"
-            |> Header.bad_request()
-            |> Header.format()
+            data =
+              "Internal Server Error"
+              |> Header.permanent_failure()
+              |> Header.format()
 
-          do_send(conn, data)
+            do_send(conn, socket, data)
         end
 
       {:ssl_closed, _socket} ->
@@ -81,23 +107,10 @@ defmodule Spaceboy.Handler do
         :ok = :ranch_ssl.close(socket)
         Process.exit(self(), :kill)
 
-      {:ssl_passive, socket} ->
+      {:ssl_passive, _socket} ->
         Logger.warn("SSL Passive mode")
-        loop(%Conn{conn | socket: socket}, server)
+        loop(conn, server)
     end
-  rescue
-    err ->
-      Logger.error([
-        "Internal Server Error\n\n",
-        Exception.format(:error, err, __STACKTRACE__)
-      ])
-
-      data =
-        "Internal Server Error"
-        |> Header.permanent_failure()
-        |> Header.format()
-
-      do_send(conn, data)
   end
 
   # Check if request is according to specs
@@ -106,30 +119,34 @@ defmodule Spaceboy.Handler do
 
   # Parse request data into the Conn struct
   defp parse_data(%Conn{} = conn, data) do
-    %URI{path: path, query: query} =
+    %URI{path: path, query: query, authority: host} =
       data
       |> String.trim()
       |> URI.parse()
 
-    %Conn{conn | path: path, query: query}
+    %Conn{
+      conn
+      | request_path: path,
+        path_info: Utils.split(path),
+        query_string: query,
+        host: host
+    }
   end
 
   # Send standard response
-  defp do_send(%Conn{before_send: before_send} = conn, data) do
-    %Conn{transport: transport, socket: socket} =
-      Enum.reduce(before_send, conn, fn bs, conn -> bs.(conn) end)
+  defp do_send(%Conn{before_send: before_send} = conn, socket, data) do
+    _conn = Enum.reduce(before_send, conn, fn bs, conn -> bs.(conn) end)
 
-    :ok = transport.send(socket, data)
-    :ok = transport.close(socket)
+    :ok = :ranch_ssl.send(socket, data)
+    :ok = :ranch_ssl.close(socket)
   end
 
   # Send file response
-  defp do_send_file(%Conn{before_send: before_send} = conn, header, file) do
-    %Conn{transport: transport, socket: socket} =
-      Enum.reduce(before_send, conn, fn bs, conn -> bs.(conn) end)
+  defp do_send_file(%Conn{before_send: before_send} = conn, socket, header, file) do
+    _conn = Enum.reduce(before_send, conn, fn bs, conn -> bs.(conn) end)
 
-    :ok = transport.send(socket, header)
-    {:ok, _sent_bytes} = transport.sendfile(socket, file)
-    :ok = transport.close(socket)
+    :ok = :ranch_ssl.send(socket, header)
+    {:ok, _sent_bytes} = :ranch_ssl.sendfile(socket, file)
+    :ok = :ranch_ssl.close(socket)
   end
 end

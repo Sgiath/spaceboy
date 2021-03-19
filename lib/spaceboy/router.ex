@@ -9,47 +9,8 @@ defmodule Spaceboy.Router do
   `Spaceboy.Router` is usually last middleware in your `Spaceboy.Server` but it is not requirement.
   """
 
-  @doc false
-  @spec split(String.t()) :: [String.t()]
-  def split(path) do
-    path
-    |> String.split("/")
-    |> Enum.filter(fn segment -> segment != "" end)
-  end
-
-  @doc false
-  @spec convert([String.t()], [String.t() | tuple()]) :: [String.t() | tuple()]
-  def convert(segments, acc \\ [])
-
-  def convert([":" <> segment | segments], acc) do
-    acc = [{String.to_atom("_#{segment}"), [], nil} | acc]
-
-    convert(segments, acc)
-  end
-
-  def convert(["*" <> segment | []], acc) do
-    glob(String.to_atom("_#{segment}"), acc)
-  end
-
-  def convert(["*" | []], acc), do: glob(:_, acc)
-
-  def convert(["*" <> _segment | _segments], _acc) do
-    raise "Glob pattern must be the last one"
-  end
-
-  def convert(["*" | _segments], _acc) do
-    raise "Glob pattern must be the last one"
-  end
-
-  def convert([segment | segments], acc) do
-    convert(segments, [segment | acc])
-  end
-
-  def convert([], acc), do: Enum.reverse(acc)
-
-  defp glob(segment, [ha | acc]) do
-    Enum.reverse([{:|, [], [ha, {segment, [], nil}]} | acc])
-  end
+  alias Spaceboy.Utils
+  alias Spaceboy.Router.Builder
 
   defmacro __using__(_opts) do
     quote do
@@ -65,14 +26,14 @@ defmodule Spaceboy.Router do
       def init(opts), do: opts
 
       @impl Spaceboy.Middleware
-      def call(%Spaceboy.Conn{path: path} = conn, _opts),
-        do: match(conn, Spaceboy.Router.split(path))
+      def call(%Spaceboy.Conn{path_info: path} = conn, _opts),
+        do: match(conn, path)
     end
   end
 
   defmacro __before_compile__(_env) do
     quote do
-      def match(%Spaceboy.Conn{path: path} = conn, _catch_all) do
+      def match(%Spaceboy.Conn{request_path: path} = conn, _catch_all) do
         Logger.warn("Page not found #{path}")
 
         Spaceboy.Conn.not_found(conn)
@@ -84,13 +45,12 @@ defmodule Spaceboy.Router do
   Adds route for URL
   """
   defmacro route(pattern, module, fun) when is_binary(pattern) do
-    pattern =
-      pattern
-      |> split()
-      |> convert()
+    {pattern, params} = build(pattern)
 
     quote location: :keep do
       def match(%Spaceboy.Conn{} = conn, unquote(pattern)) do
+        conn = Spaceboy.Conn.fetch_params(%{conn | path_params: unquote(params)})
+
         apply(unquote(module), unquote(fun), [conn])
       end
     end
@@ -106,10 +66,7 @@ defmodule Spaceboy.Router do
       library to guess mime type of files. Or can be specific MIME type e.g. "text/gemini" (default)
   """
   defmacro static(prefix, root, opts \\ []) do
-    pattern =
-      (prefix <> "/*path")
-      |> split()
-      |> convert()
+    {pattern, params} = build(prefix <> "/*path")
 
     opts =
       opts
@@ -118,6 +75,8 @@ defmodule Spaceboy.Router do
 
     quote location: :keep do
       def match(%Spaceboy.Conn{} = conn, unquote(pattern)) do
+        conn = Spaceboy.Conn.fetch_params(%Spaceboy.Conn{conn | path_params: unquote(params)})
+
         Spaceboy.Static.render(conn, unquote(opts))
       end
     end
@@ -127,15 +86,18 @@ defmodule Spaceboy.Router do
   Adds redirect
   """
   defmacro redirect(from, to) do
-    pattern =
-      from
-      |> split()
-      |> convert()
+    {pattern, _params} = build(from)
 
     quote do
       def match(%Spaceboy.Conn{} = conn, unquote(pattern)) do
         Spaceboy.Conn.redirect(conn, unquote(to))
       end
     end
+  end
+
+  defp build(path) do
+    path
+    |> Utils.split()
+    |> Builder.convert()
   end
 end
