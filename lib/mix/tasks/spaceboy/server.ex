@@ -18,8 +18,10 @@ defmodule Mix.Tasks.Spaceboy.Server do
 
   use Mix.Task
 
+  alias Mix.Tasks.Run
+
   @impl Mix.Task
   def run(args) do
-    Mix.Tasks.Run.run(["--no-halt" | args])
+    Run.run(["--no-halt" | args])
   end
 end

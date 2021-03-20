@@ -9,8 +9,8 @@ defmodule Spaceboy.Router do
   `Spaceboy.Router` is usually last middleware in your `Spaceboy.Server` but it is not requirement.
   """
 
-  alias Spaceboy.Utils
   alias Spaceboy.Router.Builder
+  alias Spaceboy.Utils
 
   defmacro __using__(_opts) do
     quote do

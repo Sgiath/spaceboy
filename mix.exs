@@ -37,6 +37,9 @@ defmodule Spaceboy.MixProject do
       {:mime, "~> 1.5"},
       {:typed_struct, "~> 0.2"},
 
+      # Dev deps
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+
       # Docs dependencies
       {:ex_doc, "~> 0.24", only: :dev, runtime: false}
     ]

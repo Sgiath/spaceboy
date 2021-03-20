@@ -17,7 +17,7 @@ defmodule Spaceboy.Config do
       keyfile: opts[:keyfile],
       cacertfile: "/dev/null",
       verify: :verify_peer,
-      verify_fun: {fn _, _, _ -> {:valid, :unknown_user} end, []},
+      verify_fun: {fn _cert, _event, _init_state -> {:valid, :unknown_user} end, []},
       versions: [:"tlsv1.3"]
     ]
   end

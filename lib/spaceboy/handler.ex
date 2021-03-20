@@ -1,13 +1,13 @@
 defmodule Spaceboy.Handler do
   @moduledoc false
 
+  @behaviour :ranch_protocol
+
   alias Spaceboy.Conn
   alias Spaceboy.Header
   alias Spaceboy.Utils
 
   require Logger
-
-  @behaviour :ranch_protocol
 
   @doc """
   Spawn new process for connection
@@ -61,19 +61,7 @@ defmodule Spaceboy.Handler do
             conn
             |> parse_data(data)
             |> server.call()
-            |> case do
-              %Conn{state: :unset} ->
-                raise "Response not set"
-
-              %Conn{state: :set, body: nil, header: %Header{code: code}} = conn when code != 20 ->
-                do_send(conn, socket, Header.format(conn.header))
-
-              %Conn{state: :set, body: body, header: %Header{code: 20} = header} = conn ->
-                do_send(conn, socket, [Header.format(header), body])
-
-              %Conn{state: :set_file, body: file, header: %Header{code: 20} = header} = conn ->
-                do_send_file(conn, socket, Header.format(header), file)
-            end
+            |> respond(socket)
           else
             Logger.error("Got request out of spec: #{inspect(data)}")
 
@@ -131,6 +119,22 @@ defmodule Spaceboy.Handler do
         query_string: query,
         host: host
     }
+  end
+
+  defp respond(%Conn{state: :unset}, _socket) do
+    raise "Response not set"
+  end
+
+  defp respond(%Conn{state: :set, body: nil, header: header} = conn, socket) do
+    do_send(conn, socket, Header.format(header))
+  end
+
+  defp respond(%Conn{state: :set, body: body, header: header} = conn, socket) do
+    do_send(conn, socket, [Header.format(header), body])
+  end
+
+  defp respond(%Conn{state: :set_file, body: file, header: header} = conn, socket) do
+    do_send_file(conn, socket, Header.format(header), file)
   end
 
   # Send standard response
