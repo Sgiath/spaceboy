@@ -36,6 +36,7 @@ defmodule Spaceboy.MixProject do
       {:jason, "~> 1.2"},
       {:mime, "~> 1.5"},
       {:typed_struct, "~> 0.2"},
+      {:telemetry, "~> 0.4"},
 
       # Dev deps
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
@@ -89,7 +90,9 @@ defmodule Spaceboy.MixProject do
       ],
       Middlewares: [
         Spaceboy.Middleware,
-        Spaceboy.Middleware.Logger
+        Spaceboy.Middleware.Logger,
+        Spaceboy.Middleware.RequestId,
+        Spaceboy.Middleware.Telemetry
       ],
       Utils: [
         Spaceboy.PeerCert

@@ -2,14 +2,12 @@ defmodule Spaceboy.Middleware do
   @moduledoc """
   Spaceboy server middleware, roughly similar to `Plug`s plug
 
-  Middleware has to implement two functions `init/1` and `call/2`. For example implementation of
-  middleware please look at `Spaceboy.Middleware.Logger` module.
+  Middleware has to implement two functions `init/1` and `call/2`. For example
+  implementation of middleware please look at `Spaceboy.Middleware.Logger` module.
   """
 
-  @type opts :: Keyword.t()
-
-  @callback init(opts) :: opts
-  @callback call(conn :: Spaceboy.Conn.t(), opts) :: Spaceboy.Conn.t()
+  @callback init(opts :: Keyword.t()) :: any()
+  @callback call(conn :: Spaceboy.Conn.t(), opts :: any()) :: Spaceboy.Conn.t()
 
   @doc false
   def run(%Spaceboy.Conn{} = conn, [{module, opts} | middlewares]) do

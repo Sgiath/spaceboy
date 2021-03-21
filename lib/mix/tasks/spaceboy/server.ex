@@ -6,8 +6,8 @@ defmodule Mix.Tasks.Spaceboy.Server do
 
   ## Command line options
 
-  This task accepts the same command-line arguments as `run`. For additional information, refer to
-  the documentation for `Mix.Tasks.Run`.
+  This task accepts the same command-line arguments as `run`. For additional
+  information, refer to the documentation for `Mix.Tasks.Run`.
 
   For example, to run `spaceboy.server` without recompiling:
 

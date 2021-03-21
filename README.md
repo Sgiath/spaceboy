@@ -20,10 +20,12 @@ you can use as starting point.
   - [x] in code documentation
   - [ ] guides and instructions
 - [x] advanced work with client certificates
-- [ ] telemetry
+- [x] telemetry
+- [ ] session tracking based on client certificate
 - [ ] easy statistics for servers (number of visits, etc.)
-- [ ] simple integration with Ecto for building more complex applications
 - [ ] templating support
   - [ ] Gemini files
   - [ ] ANSI files (maybe?)
   - [ ] other MIME types ?
+- [ ] simple integration with Ecto for building more complex applications (how?
+      what? is it necessary?)

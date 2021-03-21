@@ -2,11 +2,12 @@ defmodule Spaceboy.Router do
   @moduledoc """
   Router implementation for Spaceboy server.
 
-  Router is technically a `Spaceboy.Middleware` but it is so havily customized that you would not
-  recognize it. But of course you don't have to use this helper module and implement it from scratch
-  as `Spaceboy.Middleware`.
+  Router is technically a `Spaceboy.Middleware` but it is so havily customized
+  that you would not recognize it. But of course you don't have to use this
+  helper module and implement it from scratch as `Spaceboy.Middleware`.
 
-  `Spaceboy.Router` is usually last middleware in your `Spaceboy.Server` but it is not requirement.
+  `Spaceboy.Router` is usually last middleware in your `Spaceboy.Server` but it
+  is not requirement.
   """
 
   alias Spaceboy.Router.Builder
@@ -62,8 +63,9 @@ defmodule Spaceboy.Router do
   ## Options
 
     - `ls_dir?: boolean()` - if true (default) directories will list it's files
-    - `mime: :guess | String.t()` - what MIME type to use for files. Can be `:guess` to use `MIME`
-      library to guess mime type of files. Or can be specific MIME type e.g. "text/gemini" (default)
+    - `mime: :guess | String.t()` - what MIME type to use for files. Can be
+      `:guess` to use `MIME` library to guess mime type of files. Or can be
+      specific MIME type e.g. "text/gemini" (default)
   """
   defmacro static(prefix, root, opts \\ []) do
     {pattern, params} = build(prefix <> "/*path")

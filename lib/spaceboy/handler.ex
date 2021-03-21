@@ -74,17 +74,16 @@ defmodule Spaceboy.Handler do
           end
         rescue
           err ->
-            Logger.error([
-              "Internal Server Error\n\n",
-              Exception.format(:error, err, __STACKTRACE__)
-            ])
+            Logger.error("Internal Server Error")
 
             data =
               "Internal Server Error"
-              |> Header.permanent_failure()
+              |> Header.temporary_failure()
               |> Header.format()
 
             do_send(conn, socket, data)
+
+            :erlang.raise(:error, err, __STACKTRACE__)
         end
 
       {:ssl_closed, _socket} ->

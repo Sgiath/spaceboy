@@ -2,7 +2,8 @@ defmodule Spaceboy.Header do
   @moduledoc """
   Struct representing Gemini header response.
 
-  You should not create headers directly - all supported headers has functions with correct codes.
+  You should not create headers directly - all supported headers has functions
+  with correct codes.
   """
 
   use TypedStruct

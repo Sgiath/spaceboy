@@ -2,8 +2,8 @@ defmodule Spaceboy.Static do
   @moduledoc """
   Controller handling static files rendering
 
-  You are not supposed to use it directly but with `Spaceboy.Router.static/3` macro which nicely
-  wraps its functionality.
+  You are not supposed to use it directly but with `Spaceboy.Router.static/3`
+  macro which nicely wraps its functionality.
   """
 
   alias Spaceboy.Conn
@@ -23,7 +23,7 @@ defmodule Spaceboy.Static do
     end
   end
 
-  defp render_dir(%Conn{params: %{path: path}} = conn, opts) do
+  defp render_dir(%Conn{params: %{path: path} = params} = conn, opts) do
     fs_path = Path.join(opts[:root] ++ path)
 
     cond do
@@ -32,8 +32,8 @@ defmodule Spaceboy.Static do
         opts = Map.put(opts, :mime, "text/gemini")
 
         # Append "index.gmi" to the path
-        path = Enum.reverse(["index.gmi" | Enum.reverse(path)])
-        conn = %Conn{conn | params: %{conn.params | path: path}}
+        params = Map.update!(params, :path, &Kernel.++(&1, ["index.gmi"]))
+        conn = %Conn{conn | params: params}
 
         render_file(conn, opts)
 

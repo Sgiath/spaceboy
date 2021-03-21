@@ -1,18 +1,19 @@
 defmodule Spaceboy.Server do
   @moduledoc """
-  Main configuration for your Spaceboy server. Roughly equivalet to `Phoenix.Endpoint`
+  Main configuration for your Spaceboy server. Roughly equivalet to
+  `Phoenix.Endpoint`
 
   ## TLS certificate and configuration
 
-  Server requires TLS certificate to function properly. It can be self-signed and you can generate
-  one with this command:
+  Server requires TLS certificate to function properly. It can be self-signed and
+  you can generate one with this command:
 
   ```
   mix spaceboy.gen.cert
   ```
 
-  The default location for certificate is: `priv/ssl/` but you can change it to whatever path you
-  want via configuration:
+  The default location for certificate is: `priv/ssl/` but you can change it to
+  whatever path you want via configuration:
 
   ```elixir
   config :example, Example.Server,
@@ -22,8 +23,8 @@ defmodule Spaceboy.Server do
     keyfile: "priv/ssl/key.pem"
   ```
 
-  or when starting your server in Application module (in case you need programatically controlled
-  configuration):
+  or when starting your server in Application module (in case you need
+  programatically controlled configuration):
 
   ```elixir
   def start(_type, _args) do
@@ -44,8 +45,8 @@ defmodule Spaceboy.Server do
 
   ## Gemini MIME type
 
-  To save yourself from always passing Gemini mime type when sending file it is recommended to add
-  Gemini mime type to `MIME` library configuration:
+  To save yourself from always passing Gemini mime type when sending file it is
+  recommended to add Gemini mime type to `MIME` library configuration:
 
   ```elixir
   config :mime, :types, %{

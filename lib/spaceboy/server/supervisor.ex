@@ -50,7 +50,7 @@ defmodule Spaceboy.Server.Supervisor do
 
   defp log_access_url(mod, opts) do
     Logger.info("Server #{inspect(mod)} started at 0.0.0.0:#{opts[:port]} (gemini)")
-    Logger.info("Access #{inspect(mod)} at gemini://#{opts[:host]}")
+    Logger.info("Access #{inspect(mod)} at gemini://#{opts[:host]}\n")
   end
 
   defp check_certs(opts) do

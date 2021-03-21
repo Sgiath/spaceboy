@@ -8,8 +8,12 @@ defmodule Spaceboy.Middleware.Logger do
   middleware Spaceboy.Middleware.Logger
   ```
 
-  Since this middleware is measuring the time it takes server to process the response it is
-  recommneded to include it as first middleware so it is measuring everything.
+  It takes optional config `:log_level` which sets the level at which the logs
+  are logged. By default it is `:debug` level.
+
+  ```
+  middleware Spaceboy.Middleware.Logger, log_level: :info
+  ```
   """
 
   @behaviour Spaceboy.Middleware
@@ -19,18 +23,21 @@ defmodule Spaceboy.Middleware.Logger do
   require Logger
 
   @impl Spaceboy.Middleware
-  def init(_opts), do: []
+  def init(opts), do: opts
 
   @impl Spaceboy.Middleware
-  def call(%Conn{} = conn, _opts) do
+  def call(%Conn{request_path: path} = conn, opts) do
+    level = Keyword.get(opts, :log_level, :debug)
+    Logger.log(level, ["req:", ?\s, path])
+
     start = System.monotonic_time()
 
     Conn.register_before_send(conn, fn %Conn{header: header} = conn ->
-      Logger.debug(fn ->
+      Logger.log(level, fn ->
         stop = System.monotonic_time()
         diff = System.convert_time_unit(stop - start, :native, :microsecond)
 
-        ["Sent ", Integer.to_string(header.code), " in ", formated_diff(diff)]
+        ["res: Sent ", Integer.to_string(header.code), " in ", formated_diff(diff), ?\n]
       end)
 
       conn

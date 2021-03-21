@@ -1,12 +1,14 @@
 defmodule Spaceboy.Conn do
   @moduledoc """
-  Struct representing Spaceboy connection (request) roughly equivalent to `Plug.Conn`
+  Struct representing Spaceboy connection (request) roughly equivalent to
+  `Plug.Conn`
 
   This is main struct that will go through the whole request lifetime.
 
   ## Request fields
 
-  These values are set by the framework and you are supposed to treat them as read-only
+  These values are set by the framework and you are supposed to treat them as
+  read-only.
 
     - `:scheme` - is always `:gemini` (no other schemes are supported)
     - `:host` - will be set to host from request
@@ -21,13 +23,16 @@ defmodule Spaceboy.Conn do
 
   These fields are not populated until they are fetched manually.
 
+    - `:request_id` - unique ID, populated by `Spaceboy.Middleware.RequestId`
+      middleware
     - `:path_params` - fetched by `Spaceboy.Router`
     - `:query_params` - fetched by `fetch_query_params/1`
     - `:params` - combined field of `:path_params` and `:query_params`
 
-  Those fields requires manual fetching because you don't always want to format e.g. query. If you
-  are using query for simple user input (e.g. username) and the query looks like `&my_username` you
-  actually don't want to fetch it and create params from it.
+  Those fields requires manual fetching because you don't always want to format
+  e.g. query. If you are using query for simple user input (e.g. username) and
+  the query looks like `&my_username` you actually don't want to fetch it and
+  create params from it.
 
   ## Response fields
 
@@ -36,8 +41,8 @@ defmodule Spaceboy.Conn do
     - `:header` - header struct for the response
     - `:body` - response body or file path
 
-  Furthermore, the `before_send` field stores callbacks that are invoked before the connection is
-  sent.
+  Furthermore, the `before_send` field stores callbacks that are invoked before
+  the connection is sent.
 
   ## Connection fields
 
@@ -46,8 +51,9 @@ defmodule Spaceboy.Conn do
     - `:halted` - the boolean status on whether the pipeline was halted
     - `:state` - the connection state
 
-  The connection state is used to track the connection lifecycle. It starts as `:unset` but is
-  changed to `:set` or `:set_file` when response is set. Its final result is `:sent`.
+  The connection state is used to track the connection lifecycle. It starts as
+  `:unset` but is changed to `:set` or `:set_file` when response is set. Its
+  final result is `:sent`.
   """
 
   use TypedStruct
@@ -80,6 +86,7 @@ defmodule Spaceboy.Conn do
     field :peer_cert, binary() | :no_peercert, default: :no_peercert
 
     # Fetchable fields
+    field :request_id, binary()
     field :path_params, map() | Unfetched.t(), default: %Unfetched{aspect: :path_params}
     field :query_params, map() | Unfetched.t(), default: %Unfetched{aspect: :query_params}
     field :params, map() | Unfetched.t(), default: %Unfetched{aspect: :params}
@@ -103,7 +110,7 @@ defmodule Spaceboy.Conn do
 
   ## Examples
 
-      iex> conn = Spaceboy.Conn.register_before_send(%Spaceboy.Conn{}, fn conn -> conn end)
+      iex> conn = Spaceboy.Conn.register_before_send(%Spaceboy.Conn{}, & &1)
       iex> length(conn.before_send)
       1
       iex> is_function(hd(conn.before_send), 1)
@@ -141,8 +148,8 @@ defmodule Spaceboy.Conn do
   @doc """
   Add file as response.
 
-  Third argument is MIME type of the file. If it is not set the function will use `MIME.from_path/1`
-  function to guess its type.
+  Third argument is MIME type of the file. If it is not set the function will use
+  `MIME.from_path/1` function to guess its type.
   """
   @spec file(conn :: t, file_path :: Path.t(), mime :: String.t() | nil) :: t
   def file(conn, file_path, mime \\ nil)

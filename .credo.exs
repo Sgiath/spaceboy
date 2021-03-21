@@ -99,7 +99,7 @@
         {Credo.Check.Readability.StrictModuleLayout, []},
         {Credo.Check.Readability.WithCustomTaggedTuple, []},
         {Credo.Check.Refactor.ABCSize, []},
-        {Credo.Check.Refactor.AppendSingleItem, []},
+        {Credo.Check.Refactor.AppendSingleItem, false},
         {Credo.Check.Refactor.DoubleBooleanNegation, []},
         {Credo.Check.Refactor.ModuleDependencies, []},
         {Credo.Check.Refactor.NegatedIsNil, []},
