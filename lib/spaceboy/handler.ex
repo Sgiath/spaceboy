@@ -5,112 +5,50 @@ defmodule Spaceboy.Handler do
 
   alias Spaceboy.Conn
   alias Spaceboy.Header
+  alias Spaceboy.Specification
   alias Spaceboy.Utils
 
   require Logger
 
-  @doc """
-  Spawn new process for connection
-  """
   def start_link(ref, transport, opts) do
     pid = spawn_link(__MODULE__, :init, [ref, transport, opts])
 
     {:ok, pid}
   end
 
-  @doc """
-  Initialize new connection
-
-    - handshake
-    - load peer certificate
-    - create `Spaceboy.Conn` struct
-    - enter the connection loop
-  """
   def init(ref, _transport, opts) do
     # Establish connection
     {:ok, socket} = :ranch.handshake(ref)
 
-    # Obtain connection info
-    {:ok, {peer_ip, _peer_port}} = :ssl.peername(socket)
-    {:ok, {_local_ip, port}} = :ssl.sockname(socket)
-    {_status, peer_cert} = :ssl.peercert(socket)
-
     # Set active mode
     :ok = :ranch_ssl.setopts(socket, active: :once)
 
-    # Create Conn struct
-    conn = %Conn{
-      owner: self(),
-      port: port,
-      remote_ip: peer_ip,
-      peer_cert: peer_cert
-    }
-
-    # Start loop
-    loop(conn, opts[:server])
+    socket
+    |> create_conn()
+    |> loop(opts[:server])
   end
 
-  @doc """
-  Loop receiving request data as Elixir messages
-  """
   def loop(%Conn{} = conn, server) do
     receive do
       {:ssl, socket, data} ->
-        try do
-          if valid?(data) do
-            conn
-            |> parse_data(data)
-            |> server.call()
-            |> respond(socket)
-          else
-            Logger.error("Got request out of spec: #{inspect(data)}")
+        process_data(conn, server, socket, data)
 
-            data =
-              "Invalid protocol"
-              |> Header.bad_request()
-              |> Header.format()
-
-            do_send(conn, socket, data)
-          end
-        rescue
-          err ->
-            Logger.error("Internal Server Error")
-
-            data =
-              "Internal Server Error"
-              |> Header.temporary_failure()
-              |> Header.format()
-
-            do_send(conn, socket, data)
-
-            :erlang.raise(:error, err, __STACKTRACE__)
-        end
-
-      {:ssl_closed, _socket} ->
-        Logger.debug("connection closed")
+      {:ssl_closed, socket} ->
+        Logger.warning("connection closed")
+        :ranch_ssl.close(socket)
 
       {:ssl_error, socket, reason} ->
         Logger.error("SSL Error: #{reason}")
-        :ok = :ranch_ssl.close(socket)
-        Process.exit(self(), :kill)
+        :ranch_ssl.close(socket)
 
       {:ssl_passive, _socket} ->
-        Logger.warn("SSL Passive mode")
+        Logger.warning("SSL Passive mode")
         loop(conn, server)
     end
   end
 
-  # Check if request is according to specs
-  defp valid?("gemini://" <> data), do: String.ends_with?(data, "\r\n")
-  defp valid?(_data), do: false
-
   # Parse request data into the Conn struct
-  defp parse_data(%Conn{} = conn, data) do
-    %URI{path: path, query: query, authority: host} =
-      data
-      |> String.trim()
-      |> URI.parse()
-
+  defp parse_data(%Conn{} = conn, %URI{path: path, query: query, authority: host}) do
     %Conn{
       conn
       | request_path: path,
@@ -118,6 +56,55 @@ defmodule Spaceboy.Handler do
         query_string: query,
         host: host
     }
+  end
+
+  # Create new Conn struct from socket
+  defp create_conn(socket) do
+    # Obtain connection info
+    {:ok, {peer_ip, _peer_port}} = :ssl.peername(socket)
+    {:ok, {_local_ip, port}} = :ssl.sockname(socket)
+    {_status, peer_cert} = :ssl.peercert(socket)
+
+    %Conn{
+      owner: self(),
+      port: port,
+      remote_ip: peer_ip,
+      peer_cert: peer_cert
+    }
+  end
+
+  defp internal_server_error do
+    "Internal Server Error"
+    |> Header.temporary_failure()
+    |> Header.format()
+  end
+
+  defp invalid_request(reason) do
+    reason
+    |> Header.bad_request()
+    |> Header.format()
+  end
+
+  defp process_data(conn, server, socket, data) do
+    case Specification.check(data) do
+      {:ok, data} ->
+        try do
+          conn
+          |> parse_data(data)
+          |> server.call()
+          |> respond(socket)
+        rescue
+          err ->
+            Logger.error("Internal Server Error")
+            do_send(conn, socket, internal_server_error())
+
+            reraise err, __STACKTRACE__
+        end
+
+      {:error, reason} ->
+        Logger.error("Got request out of spec: #{reason}")
+        do_send(conn, socket, invalid_request(reason))
+    end
   end
 
   defp respond(%Conn{state: :unset}, _socket) do
