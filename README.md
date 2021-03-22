@@ -3,7 +3,7 @@
 The [Phoenix framework](https://www.phoenixframework.org/) for
 [Gemini protocol](https://gemini.circumlunar.space/). Heavily simplified.
 
-## Setup
+## Usage
 
 I recommend you to look at `example/` folder which contains simple application
 you can use as starting point.

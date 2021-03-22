@@ -56,9 +56,9 @@ defmodule Spaceboy.Conn do
   final result is `:sent`.
   """
 
-  use TypedStruct
-
   @behaviour Access
+
+  use TypedStruct
 
   alias Spaceboy.Header
 
@@ -244,7 +244,12 @@ defmodule Spaceboy.Conn do
 
   # Access behaviour
 
+  @doc false
   defdelegate fetch(conn, key), to: Map
+
+  @doc false
   defdelegate get_and_update(conn, key, function), to: Map
+
+  @doc false
   defdelegate pop(conn, key), to: Map
 end

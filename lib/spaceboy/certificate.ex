@@ -11,14 +11,14 @@ defmodule Spaceboy.PeerCert do
 
   @doc ~S"""
   Extract RDN Sequences from certificate
+
+  Dialyxir currently shows warnings because of bug in `:public_key` source code
+  https://github.com/erlang/otp/issues/4650
   """
   @spec rdn(peer_cert :: peer_cert) :: rdn | :no_peercert
   def rdn(cert) when is_binary(cert) do
     with {_subject_sn, sub_rdn} <- :public_key.pkix_subject_id(cert),
          {:ok, {_issuer_sn, iss_rdn}} <- :public_key.pkix_issuer_id(cert, :self) do
-      # Dialyxir currently shows warning because of bug in `:public_key` source code
-      # https://github.com/erlang/otp/issues/4650
-
       %{
         subject: rdn_sequence(sub_rdn),
         issuer: rdn_sequence(iss_rdn)

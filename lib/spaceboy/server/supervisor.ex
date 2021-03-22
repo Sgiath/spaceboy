@@ -3,9 +3,6 @@ defmodule Spaceboy.Server.Supervisor do
 
   use Supervisor
 
-  alias Spaceboy.Config
-  alias Spaceboy.Handler
-
   require Logger
 
   def start_link(module, opts \\ []) do
@@ -30,13 +27,7 @@ defmodule Spaceboy.Server.Supervisor do
 
   def init(opts) do
     children = [
-      :ranch.child_spec(
-        :gemini,
-        :ranch_ssl,
-        Config.trans_opts(opts),
-        Handler,
-        opts
-      )
+      opts[:adapter].child_spec(opts)
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -46,6 +37,7 @@ defmodule Spaceboy.Server.Supervisor do
     otp_app
     |> Application.get_env(module, [])
     |> Keyword.put(:server, module)
+    |> Keyword.put(:adapter, Spaceboy.Adapter.Ranch)
   end
 
   defp log_access_url(mod, opts) do
