@@ -1,5 +1,5 @@
 defmodule Spaceboy.PeerCert do
-  @moduledoc """
+  @moduledoc ~S"""
   Utility functions to ease the work with Peer Certificates
   """
 
@@ -9,7 +9,7 @@ defmodule Spaceboy.PeerCert do
           issuer: map()
         }
 
-  @doc """
+  @doc ~S"""
   Extract RDN Sequences from certificate
   """
   @spec rdn(peer_cert :: peer_cert) :: rdn | :no_peercert

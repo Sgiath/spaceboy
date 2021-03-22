@@ -1,5 +1,5 @@
 defmodule Spaceboy.Server do
-  @moduledoc """
+  @moduledoc ~S"""
   Main configuration for your Spaceboy server. Roughly equivalet to
   `Phoenix.Endpoint`
 
@@ -106,7 +106,7 @@ defmodule Spaceboy.Server do
     end
   end
 
-  @doc """
+  @doc ~S"""
   Add middleware to your server configuration
   """
   defmacro middleware(module, opts \\ []) do

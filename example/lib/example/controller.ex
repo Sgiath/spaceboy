@@ -3,7 +3,7 @@ defmodule Example.Controller do
 
   require Logger
 
-  @doc """
+  @doc ~S"""
   Index page with Gemini response constructed as string
   """
   def index(conn) do
@@ -22,7 +22,7 @@ defmodule Example.Controller do
     """)
   end
 
-  @doc """
+  @doc ~S"""
   Page requiring user input and then redirecting to appropriate page
   """
   def users(%Conn{query_string: nil} = conn) do
@@ -35,7 +35,7 @@ defmodule Example.Controller do
     Conn.redirect(conn, "/user/#{user}")
   end
 
-  @doc """
+  @doc ~S"""
   Page with URL parameter
   """
   def user(%Conn{params: %{user_id: user_id}} = conn) do
@@ -51,7 +51,7 @@ defmodule Example.Controller do
     """)
   end
 
-  @doc """
+  @doc ~S"""
   Page showing work with certificates
   """
   def cert(%Conn{peer_cert: :no_peercert} = conn) do
@@ -72,7 +72,7 @@ defmodule Example.Controller do
     """)
   end
 
-  @doc """
+  @doc ~S"""
   Serving single file as a response
   """
   def file(conn) do

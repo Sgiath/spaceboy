@@ -1,7 +1,7 @@
 defmodule Mix.Tasks.Spaceboy.Server do
   @shortdoc "Starts the Gemini server"
 
-  @moduledoc """
+  @moduledoc ~S"""
   Starts the configured Gemini server
 
   ## Command line options

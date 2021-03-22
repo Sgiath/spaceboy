@@ -1,7 +1,7 @@
 defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   @shortdoc "Generates self-signed certificate"
 
-  @moduledoc """
+  @moduledoc ~S"""
   Generates self-signed certificate for localhost and saves it at `priv/ssl/`
 
   Currently uses EC `prime256v1` as it is the most widely supported EC algorithm.

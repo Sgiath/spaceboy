@@ -1,5 +1,5 @@
 defmodule Spaceboy.Middleware.Telemetry do
-  @moduledoc """
+  @moduledoc ~S"""
   A plug to instrument the server with `:telemetry` events.
 
   When plugged, the event prefix is a required option:

@@ -1,5 +1,5 @@
 defmodule Spaceboy.Middleware.RequestId do
-  @moduledoc """
+  @moduledoc ~S"""
   A plug for generating a unique request id for each request.
 
   The generated request id will be in the format

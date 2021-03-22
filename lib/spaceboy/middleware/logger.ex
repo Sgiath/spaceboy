@@ -1,5 +1,5 @@
 defmodule Spaceboy.Middleware.Logger do
-  @moduledoc """
+  @moduledoc ~S"""
   Example middleware which provides simple logging for processed request.
 
   Use in your `Spaceboy.Server` implementation as:
@@ -28,7 +28,7 @@ defmodule Spaceboy.Middleware.Logger do
   @impl Spaceboy.Middleware
   def call(%Conn{request_path: path} = conn, opts) do
     level = Keyword.get(opts, :log_level, :debug)
-    Logger.log(level, ["req:", ?\s, path])
+    Logger.log(level, path)
 
     start = System.monotonic_time()
 
@@ -37,7 +37,7 @@ defmodule Spaceboy.Middleware.Logger do
         stop = System.monotonic_time()
         diff = System.convert_time_unit(stop - start, :native, :microsecond)
 
-        ["res: Sent ", Integer.to_string(header.code), " in ", formated_diff(diff), ?\n]
+        ["Sent ", Integer.to_string(header.code), " in ", formated_diff(diff)]
       end)
 
       conn

@@ -1,5 +1,5 @@
 defmodule Spaceboy.Router do
-  @moduledoc """
+  @moduledoc ~S"""
   Router implementation for Spaceboy server.
 
   Router is technically a `Spaceboy.Middleware` but it is so havily customized
@@ -35,14 +35,14 @@ defmodule Spaceboy.Router do
   defmacro __before_compile__(_env) do
     quote do
       def match(%Spaceboy.Conn{request_path: path} = conn, _catch_all) do
-        Logger.warn("Page not found #{path}")
+        Logger.warning("Page not found #{path}")
 
         Spaceboy.Conn.not_found(conn)
       end
     end
   end
 
-  @doc """
+  @doc ~S"""
   Adds route for URL
   """
   defmacro route(pattern, module, fun) when is_binary(pattern) do
@@ -57,7 +57,7 @@ defmodule Spaceboy.Router do
     end
   end
 
-  @doc """
+  @doc ~S"""
   Render static files route
 
   ## Options
@@ -84,7 +84,7 @@ defmodule Spaceboy.Router do
     end
   end
 
-  @doc """
+  @doc ~S"""
   Adds redirect
   """
   defmacro redirect(from, to) do

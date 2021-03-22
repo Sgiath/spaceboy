@@ -1,5 +1,5 @@
 defmodule Spaceboy.Header do
-  @moduledoc """
+  @moduledoc ~S"""
   Struct representing Gemini header response.
 
   You should not create headers directly - all supported headers has functions
@@ -13,16 +13,16 @@ defmodule Spaceboy.Header do
     field :meta, String.t() | pos_integer()
   end
 
-  @doc """
+  @doc ~S"""
   Correctly format the response header
 
   ## Examples
 
       iex> "Test input" |> Spaceboy.Header.input() |> Spaceboy.Header.format()
-      "10 Test input\\r\\n"
+      "10 Test input\r\n"
 
       iex> Spaceboy.Header.success() |> Spaceboy.Header.format()
-      "20 text/gemini; charset=utf-8\\r\\n"
+      "20 text/gemini; charset=utf-8\r\n"
 
   """
   @doc category: :utils

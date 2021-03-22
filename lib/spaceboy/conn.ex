@@ -1,5 +1,5 @@
 defmodule Spaceboy.Conn do
-  @moduledoc """
+  @moduledoc ~S"""
   Struct representing Spaceboy connection (request) roughly equivalent to
   `Plug.Conn`
 
@@ -103,7 +103,7 @@ defmodule Spaceboy.Conn do
     field :state, state(), default: :unset
   end
 
-  @doc """
+  @doc ~S"""
   Add function to be run righ before the response is actually send.
 
   Multiple functions will get executed in FIFO order.
@@ -123,7 +123,7 @@ defmodule Spaceboy.Conn do
     %{conn | before_send: [callback | before_send]}
   end
 
-  @doc """
+  @doc ~S"""
   Add response header and potentially body to the function.
   """
   @spec resp(conn :: t, header :: Header.t(), body :: String.t() | nil) :: t
@@ -145,7 +145,7 @@ defmodule Spaceboy.Conn do
     raise "Response is already set"
   end
 
-  @doc """
+  @doc ~S"""
   Add file as response.
 
   Third argument is MIME type of the file. If it is not set the function will use
@@ -170,7 +170,7 @@ defmodule Spaceboy.Conn do
     raise "Response already set"
   end
 
-  @doc """
+  @doc ~S"""
   Add text/gemini string as response
   """
   @spec gemini(conn :: t, content :: String.t()) :: t
@@ -178,7 +178,7 @@ defmodule Spaceboy.Conn do
     resp(conn, Header.success(), content)
   end
 
-  @doc """
+  @doc ~S"""
   Add map as JSON response
   """
   @spec json(conn :: t, content :: map()) :: t
@@ -186,7 +186,7 @@ defmodule Spaceboy.Conn do
     resp(conn, Header.success("application/json"), Jason.encode!(content))
   end
 
-  @doc """
+  @doc ~S"""
   Set input response
   """
   @spec input(conn :: t, promt :: String.t()) :: t
@@ -194,7 +194,7 @@ defmodule Spaceboy.Conn do
     resp(conn, Header.input(prompt))
   end
 
-  @doc """
+  @doc ~S"""
   Set redirect response
   """
   @spec redirect(conn :: t, path :: String.t()) :: t
@@ -202,7 +202,7 @@ defmodule Spaceboy.Conn do
     resp(conn, Header.redirect(path))
   end
 
-  @doc """
+  @doc ~S"""
   Set not found response
   """
   @spec not_found(conn :: t, prompt :: String.t()) :: t
@@ -210,7 +210,7 @@ defmodule Spaceboy.Conn do
     resp(conn, Header.not_found(prompt))
   end
 
-  @doc """
+  @doc ~S"""
   Set client certificate required response
   """
   @spec auth_required(conn :: t, prompt :: String.t()) :: t
@@ -218,7 +218,7 @@ defmodule Spaceboy.Conn do
     resp(conn, Header.client_certificate_required(prompt))
   end
 
-  @doc """
+  @doc ~S"""
   Fetch query params - decode `query_string` to map()
   """
   @spec fetch_query_params(conn :: t) :: t

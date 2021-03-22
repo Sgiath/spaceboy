@@ -1,5 +1,5 @@
 defmodule Spaceboy.Static do
-  @moduledoc """
+  @moduledoc ~S"""
   Controller handling static files rendering
 
   You are not supposed to use it directly but with `Spaceboy.Router.static/3`
@@ -9,7 +9,7 @@ defmodule Spaceboy.Static do
   alias Spaceboy.Conn
   alias Spaceboy.Utils
 
-  @doc """
+  @doc ~S"""
   Render appropriate content for the path
   """
   @spec render(conn :: Conn.t(), Keyword.t()) :: Conn.t()

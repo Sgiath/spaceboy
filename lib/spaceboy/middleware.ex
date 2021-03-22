@@ -1,5 +1,5 @@
 defmodule Spaceboy.Middleware do
-  @moduledoc """
+  @moduledoc ~S"""
   Spaceboy server middleware, roughly similar to `Plug`s plug
 
   Middleware has to implement two functions `init/1` and `call/2`. For example

@@ -1,5 +1,5 @@
 defmodule Example do
-  @moduledoc """
+  @moduledoc ~S"""
   This is example implementation of Spaceboy server
   """
 end
