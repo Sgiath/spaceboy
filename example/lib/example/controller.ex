@@ -1,5 +1,5 @@
 defmodule Example.Controller do
-  alias Spaceboy.Conn
+  use Spaceboy.Controller
 
   require Logger
 
@@ -15,6 +15,7 @@ defmodule Example.Controller do
     => /user Set username
     => /cert Check certificate
     => /file File test
+    => /template Template test
     => /static Folder test
     => /static/projects Folder without index.gmi
 
@@ -26,20 +27,20 @@ defmodule Example.Controller do
   Page requiring user input and then redirecting to appropriate page
   """
   def users(%Conn{query_string: nil} = conn) do
-    Conn.input(conn, "Enter username")
+    input(conn, "Enter username")
   end
 
   def users(%Conn{query_string: user} = conn) do
     Logger.info("Processing user: #{user}")
 
-    Conn.redirect(conn, "/user/#{user}")
+    redirect(conn, "/user/#{user}")
   end
 
   @doc ~S"""
   Page with URL parameter
   """
   def user(%Conn{params: %{user_id: user_id}} = conn) do
-    Conn.gemini(conn, """
+    gemini(conn, """
     # Example user page
 
     => / Home
@@ -55,13 +56,13 @@ defmodule Example.Controller do
   Page showing work with certificates
   """
   def cert(%Conn{peer_cert: :no_peercert} = conn) do
-    Conn.auth_required(conn)
+    auth_required(conn)
   end
 
   def cert(%Conn{peer_cert: pc} = conn) do
     data = Spaceboy.PeerCert.rdn(pc)
 
-    Conn.gemini(conn, """
+    gemini(conn, """
     # Example certificate page
 
     Great! Certificate detected:
@@ -70,6 +71,13 @@ defmodule Example.Controller do
     #{inspect(data)}
     ```
     """)
+  end
+
+  @doc ~S"""
+  Rendering and serving a template in the template root (`templates/`)
+  """
+  def template(conn) do
+    render(conn, "test.gmi", num: :rand.uniform(10))
   end
 
   @doc ~S"""

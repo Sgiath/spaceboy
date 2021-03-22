@@ -8,6 +8,7 @@ defmodule Example.Router do
   route "/user/:user_id", Controller, :user
   route "/cert", Controller, :cert
   route "/file", Controller, :file
+  route "/template", Controller, :template
 
   static "/static", "priv/static"
 end

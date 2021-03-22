@@ -23,9 +23,9 @@ you can use as starting point.
 - [x] telemetry
 - [ ] session tracking based on client certificate
 - [ ] easy statistics for servers (number of visits, etc.)
-- [ ] templating support
-  - [ ] Gemini files
-  - [ ] ANSI files (maybe?)
-  - [ ] other MIME types ?
+- [x] templating support
+  - [x] Gemini files
+  - [x] ANSI files (maybe?)
+  - [x] other MIME types?
 - [ ] simple integration with Ecto for building more complex applications (how?
       what? is it necessary?)

@@ -26,7 +26,7 @@ defmodule Spaceboy.MixProject do
 
   def application do
     [
-      extra_applications: [:logger, :ssl, :public_key]
+      extra_applications: [:logger, :ssl, :public_key, :eex]
     ]
   end
 
@@ -86,6 +86,7 @@ defmodule Spaceboy.MixProject do
       Server: [
         Spaceboy.Server,
         Spaceboy.Conn,
+        Spaceboy.Controller,
         Spaceboy.Router
       ],
       Middlewares: [
