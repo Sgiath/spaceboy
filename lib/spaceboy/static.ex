@@ -23,7 +23,7 @@ defmodule Spaceboy.Static do
     end
   end
 
-  defp render_dir(%Conn{params: %{path: path} = params} = conn, opts) do
+  defp render_dir(%Conn{params: %{path: path}} = conn, opts) do
     fs_path = Path.join(opts[:root] ++ path)
 
     cond do
@@ -32,8 +32,7 @@ defmodule Spaceboy.Static do
         opts = Map.put(opts, :mime, "text/gemini")
 
         # Append "index.gmi" to the path
-        params = Map.update!(params, :path, &Kernel.++(&1, ["index.gmi"]))
-        conn = %Conn{conn | params: params}
+        conn = update_in(conn, [:params, :path], &Kernel.++(&1, ["index.gmi"]))
 
         render_file(conn, opts)
 

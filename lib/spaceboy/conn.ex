@@ -58,6 +58,8 @@ defmodule Spaceboy.Conn do
 
   use TypedStruct
 
+  @behaviour Access
+
   alias Spaceboy.Header
 
   typedstruct module: Unfetched do
@@ -239,4 +241,10 @@ defmodule Spaceboy.Conn do
   def fetch_params(%__MODULE__{query_params: q_params, path_params: p_params} = conn) do
     %__MODULE__{conn | params: Map.merge(p_params, q_params)}
   end
+
+  # Access behaviour
+
+  defdelegate fetch(conn, key), to: Map
+  defdelegate get_and_update(conn, key, function), to: Map
+  defdelegate pop(conn, key), to: Map
 end
