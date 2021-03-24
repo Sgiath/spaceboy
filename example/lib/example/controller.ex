@@ -7,7 +7,7 @@ defmodule Example.Controller do
   Index page with Gemini response constructed as string
   """
   def index(conn) do
-    Conn.gemini(conn, """
+    gemini(conn, """
     # Example page
 
     This is index page
@@ -84,6 +84,6 @@ defmodule Example.Controller do
   Serving single file as a response
   """
   def file(conn) do
-    Conn.file(conn, "priv/test.txt")
+    file(conn, "priv/test.txt")
   end
 end

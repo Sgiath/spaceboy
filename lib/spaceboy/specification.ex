@@ -4,6 +4,7 @@ defmodule Spaceboy.Specification do
 
   https://gitlab.com/gemini-specification/protocol/-/blob/master/specification.gmi
   """
+  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
 
   @doc ~S"""
   Check the received data against Gemini specification
@@ -28,6 +29,7 @@ defmodule Spaceboy.Specification do
 
       iex> Spaceboy.Specification.check("gemini://user:password@localhost/\r\n")
       {:error, "URI cannot contain user info"}
+
   """
   def check(data) do
     with {:ok, data} <- end_with_crlf(data),

@@ -2,6 +2,7 @@ defmodule Spaceboy.PeerCert do
   @moduledoc ~S"""
   Utility functions to ease the work with Peer Certificates
   """
+  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
 
   @type peer_cert :: binary() | atom()
   @type rdn :: %{

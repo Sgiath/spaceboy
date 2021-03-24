@@ -56,6 +56,7 @@ defmodule Spaceboy.Server do
 
   and you need to recompile `MIME` library: `mix deps.clean mime --build`
   """
+  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
 
   defmacro __using__(opts) do
     otp_app = Keyword.get(opts, :otp_app)

@@ -37,30 +37,32 @@ defmodule Spaceboy.Handler do
     |> Map.put(:host, host)
   end
 
+  defp response(%Conn{halted: true, owner: owner}, opts) do
+    Logger.warning("Connecting halted. Disconnecting from client.")
+
+    opts[:adapter].disconnect(owner)
+  end
+
   defp response(%Conn{state: :unset}, _opts) do
     raise "Response not set"
   end
 
   defp response(%Conn{state: :set, body: nil, header: header} = conn, opts) do
-    _conn = before_send(conn)
+    _conn = Conn.execute_before_send(conn)
 
     opts[:adapter].send(conn.owner, Header.format(header))
   end
 
   defp response(%Conn{state: :set, body: body, header: header} = conn, opts) do
-    _conn = before_send(conn)
+    _conn = Conn.execute_before_send(conn)
 
     opts[:adapter].send(conn.owner, Header.format(header), body)
   end
 
   defp response(%Conn{state: :set_file, body: file, header: header} = conn, opts) do
-    _conn = before_send(conn)
+    _conn = Conn.execute_before_send(conn)
 
     opts[:adapter].send_file(conn.owner, Header.format(header), file)
-  end
-
-  defp before_send(%Conn{before_send: bs} = conn) do
-    Enum.reduce(bs, conn, fn bs, conn -> bs.(conn) end)
   end
 
   defp out_of_spec(info, reason, opts) do

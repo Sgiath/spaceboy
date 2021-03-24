@@ -9,6 +9,7 @@ defmodule Spaceboy.Router do
   `Spaceboy.Router` is usually last middleware in your `Spaceboy.Server` but it
   is not requirement.
   """
+  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
 
   alias Spaceboy.Router.Builder
   alias Spaceboy.Utils
@@ -62,10 +63,8 @@ defmodule Spaceboy.Router do
 
   ## Options
 
-    - `ls_dir?: boolean()` - if true (default) directories will list it's files
-    - `mime: :guess | String.t()` - what MIME type to use for files. Can be
-      `:guess` to use `MIME` library to guess mime type of files. Or can be
-      specific MIME type e.g. "text/gemini" (default)
+  See `Spaceboy.Static.render/2` for options (`:root` and `:prefix` are populated
+  automatically ;) )
   """
   defmacro static(prefix, root, opts \\ []) do
     {pattern, params} = build(prefix <> "/*path")

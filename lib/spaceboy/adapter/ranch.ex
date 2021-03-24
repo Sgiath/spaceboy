@@ -59,6 +59,14 @@ defmodule Spaceboy.Adapter.Ranch do
     GenServer.cast(pid, {:send_file, header, file})
   end
 
+  @doc ~S"""
+  Properly terminate the connection
+  """
+  @impl Spaceboy.Adapter
+  def disconnect(pid) do
+    GenServer.cast(pid, :disconnect)
+  end
+
   # Server
 
   @impl GenServer
@@ -86,14 +94,18 @@ defmodule Spaceboy.Adapter.Ranch do
   def handle_cast({:send, data}, state) do
     :ranch_ssl.send(state[:socket], data)
 
-    {:stop, :normal, state}
+    {:stop, :shutdown, state}
   end
 
   def handle_cast({:send_file, header, file}, state) do
     :ok = :ranch_ssl.send(state[:socket], header)
     {:ok, _send_bytes} = :ranch_ssl.sendfile(state[:socket], file)
 
-    {:stop, :normal, state}
+    {:stop, :shutdown, state}
+  end
+
+  def handle_cast(:disconnect, state) do
+    {:stop, :shutdown, state}
   end
 
   @impl GenServer

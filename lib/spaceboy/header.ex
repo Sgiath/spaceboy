@@ -5,6 +5,7 @@ defmodule Spaceboy.Header do
   You should not create headers directly - all supported headers has functions
   with correct codes.
   """
+  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
 
   use TypedStruct
 

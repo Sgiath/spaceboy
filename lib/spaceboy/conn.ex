@@ -10,51 +10,53 @@ defmodule Spaceboy.Conn do
   These values are set by the framework and you are supposed to treat them as
   read-only.
 
-    - `:scheme` - is always `:gemini` (no other schemes are supported)
-    - `:host` - will be set to host from request
-    - `:port` - listening port (default 1965)
-    - `:remote_ip` - IP address of the client (or closest proxy)
-    - `:path_info` - path segments
-    - `:request_path` - default path as received from client
-    - `:query_string` - query string as received from client
-    - `:peer_cert` - client certificate
+    * `:scheme` - is always `:gemini` (no other schemes are supported)
+    * `:host` - will be set to host from request
+    * `:port` - listening port (default 1965)
+    * `:remote_ip` - IP address of the client (or closest proxy)
+    * `:path_info` - path segments
+    * `:request_path` - default path as received from client
+    * `:query_string` - query string as received from client
+    * `:peer_cert` - client certificate
 
   ## Fetchabel fields
 
   These fields are not populated until they are fetched manually.
 
-    - `:request_id` - unique ID, populated by `Spaceboy.Middleware.RequestId`
+    * `:request_id` - unique ID, populated by `Spaceboy.Middleware.RequestId`
       middleware
-    - `:path_params` - fetched by `Spaceboy.Router`
-    - `:query_params` - fetched by `fetch_query_params/1`
-    - `:params` - combined field of `:path_params` and `:query_params`
+    * `:path_params` - fetched by `Spaceboy.Router`
+    * `:query_params` - fetched by `fetch_query_params/1`
+    * `:params` - combined field of `:path_params` and `:query_params`
 
   Those fields requires manual fetching because you don't always want to format
   e.g. query. If you are using query for simple user input (e.g. username) and
-  the query looks like `&my_username` you actually don't want to fetch it and
-  create params from it.
+  the query looks like `?my_username` you actually don't want to fetch it and
+  create params from it because they would look like: `%{"my_username" => ""}`
 
   ## Response fields
 
-  You are supposed to set those values during request lifetime
+  You are supposed to set those values during request lifetime with the functions
+  in this module:
 
-    - `:header` - header struct for the response
-    - `:body` - response body or file path
+    * `:header` - header struct for the response
+    * `:body` - response body or file path
 
-  Furthermore, the `before_send` field stores callbacks that are invoked before
+  Furthermore, the `:before_send` field stores callbacks that are invoked before
   the connection is sent.
 
   ## Connection fields
 
-    - `:assigns` - user data (currently unused)
-    - `:owner` - process which owns the connection
-    - `:halted` - the boolean status on whether the pipeline was halted
-    - `:state` - the connection state
+    * `:assigns` - user data (currently not used)
+    * `:halted` - the boolean status on whether the pipeline was halted
+    * `:state` - the connection state
+    * `:owner` - process which owns the connection
 
   The connection state is used to track the connection lifecycle. It starts as
   `:unset` but is changed to `:set` or `:set_file` when response is set. Its
   final result is `:sent`.
   """
+  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
 
   @behaviour Access
 
@@ -108,35 +110,36 @@ defmodule Spaceboy.Conn do
   @doc ~S"""
   Add function to be run righ before the response is actually send.
 
-  Multiple functions will get executed in FIFO order.
-
-  ## Examples
-
-      iex> conn = Spaceboy.Conn.register_before_send(%Spaceboy.Conn{}, & &1)
-      iex> length(conn.before_send)
-      1
-      iex> is_function(hd(conn.before_send), 1)
-      true
-
+  Multiple functions will get executed in LIFO order.
   """
   @spec register_before_send(conn :: t, callback :: (t -> t)) :: t
-  def register_before_send(%__MODULE__{before_send: before_send} = conn, callback)
-      when is_function(callback, 1) do
-    %{conn | before_send: [callback | before_send]}
+  def register_before_send(%__MODULE__{} = conn, callback) when is_function(callback, 1) do
+    Map.update(conn, :before_send, [], fn bs -> [callback | bs] end)
+  end
+
+  @doc false
+  @spec execute_before_send(conn :: t) :: t
+  def execute_before_send(%__MODULE__{before_send: before_send} = conn) do
+    Enum.reduce(before_send, conn, fn bs, conn -> bs.(conn) end)
   end
 
   @doc ~S"""
-  Add response header and potentially body to the function.
+  Set response header and potentially body to the function.
   """
   @spec resp(conn :: t, header :: Header.t(), body :: String.t() | nil) :: t
   def resp(conn, header, body \\ nil)
 
   def resp(%__MODULE__{state: :unset} = conn, %Header{} = header, nil) do
-    %{conn | header: header, state: :set}
+    conn
+    |> Map.put(:header, header)
+    |> Map.put(:state, :set)
   end
 
   def resp(%__MODULE__{state: :unset} = conn, %Header{code: 20} = header, body) do
-    %{conn | header: header, body: body, state: :set}
+    conn
+    |> Map.put(:header, header)
+    |> Map.put(:body, body)
+    |> Map.put(:state, :set)
   end
 
   def resp(%__MODULE__{state: :unset}, %Header{code: code}, _body) do
@@ -148,7 +151,7 @@ defmodule Spaceboy.Conn do
   end
 
   @doc ~S"""
-  Add file as response.
+  Set file as response.
 
   Third argument is MIME type of the file. If it is not set the function will use
   `MIME.from_path/1` function to guess its type.
@@ -162,7 +165,10 @@ defmodule Spaceboy.Conn do
 
   def file(%__MODULE__{state: :unset} = conn, file_path, mime) do
     if File.exists?(file_path) do
-      %{conn | header: Header.success(mime), state: :set_file, body: file_path}
+      conn
+      |> Map.put(:header, Header.success(mime))
+      |> Map.put(:body, file_path)
+      |> Map.put(:state, :set_file)
     else
       raise "File #{file_path} doesn't exists"
     end
@@ -173,7 +179,7 @@ defmodule Spaceboy.Conn do
   end
 
   @doc ~S"""
-  Add text/gemini string as response
+  Set text/gemini string as response
   """
   @spec gemini(conn :: t, content :: String.t()) :: t
   def gemini(%__MODULE__{} = conn, content) when is_binary(content) do
@@ -181,7 +187,7 @@ defmodule Spaceboy.Conn do
   end
 
   @doc ~S"""
-  Add map as JSON response
+  Set map as JSON response
   """
   @spec json(conn :: t, content :: map()) :: t
   def json(%__MODULE__{} = conn, content) when is_map(content) do
@@ -221,25 +227,27 @@ defmodule Spaceboy.Conn do
   end
 
   @doc ~S"""
-  Fetch query params - decode `query_string` to map()
+  Fetch query params - decode `:query_string` to `t:map()`
   """
   @spec fetch_query_params(conn :: t) :: t
   def fetch_query_params(%__MODULE__{query_string: query} = conn) do
-    fetch_params(%__MODULE__{conn | query_params: URI.decode_query(query)})
+    conn
+    |> Map.put(:query_params, URI.decode_query(query))
+    |> fetch_params()
   end
 
   @doc false
   @spec fetch_params(conn :: t) :: t
   def fetch_params(%__MODULE__{query_params: %Unfetched{}, path_params: params} = conn) do
-    %__MODULE__{conn | params: params}
+    Map.put(conn, :params, params)
   end
 
   def fetch_params(%__MODULE__{query_params: params, path_params: %Unfetched{}} = conn) do
-    %__MODULE__{conn | params: params}
+    Map.put(conn, :params, params)
   end
 
   def fetch_params(%__MODULE__{query_params: q_params, path_params: p_params} = conn) do
-    %__MODULE__{conn | params: Map.merge(p_params, q_params)}
+    Map.put(conn, :params, Map.merge(p_params, q_params))
   end
 
   # Access behaviour

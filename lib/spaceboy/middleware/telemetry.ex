@@ -28,6 +28,7 @@ defmodule Spaceboy.Middleware.Telemetry do
   The `:duration` measurements are presented in the `:native` time unit.
   You can read more about it in the docs for `System.convert_time_unit/3`.
   """
+  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
 
   @behaviour Spaceboy.Middleware
 

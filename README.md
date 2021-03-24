@@ -29,3 +29,19 @@ you can use as starting point.
   - [x] other MIME types?
 - [ ] simple integration with Ecto for building more complex applications (how?
       what? is it necessary?)
+
+## Contributing
+
+If you have any problem (aka bug) with the code or feature request feel to fill
+ticket at <https://todo.sr.ht/~sgiath/spaceboy>. Just don't expect I will
+answer or fix the ticket - I have job and family, this is just hobby I do late
+at night.
+
+If you have any code you would like to include in the framework feel free to
+send me patch at [sgiath@pm.me](mailto:sgiath@pm.me). And again don't expect I
+will answer quickly. Please send patches as attachements not in the email body
+(you will increase the chance I will be able to apply the patch easily).
+
+If you want to use part or all of my code and do anything with it - do what the
+fuck you want. I don't care - if I would care I wouldn't put it publicly on the
+internet.

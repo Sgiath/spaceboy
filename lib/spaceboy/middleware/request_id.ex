@@ -22,6 +22,7 @@ defmodule Spaceboy.Middleware.RequestId do
       middleware Spaceboy.Middleware.RequestId
 
   """
+  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
 
   @behaviour Spaceboy.Middleware
 

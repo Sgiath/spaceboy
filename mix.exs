@@ -48,7 +48,7 @@ defmodule Spaceboy.MixProject do
 
   defp package do
     [
-      maintainers: ["Sgiath"],
+      maintainers: ["Sgiath <sgiath@pm.me>"],
       licenses: ["WTFPL"],
       links: %{
         "SourceHut project" => "https://sr.ht/~sgiath/spaceboy/",
@@ -60,13 +60,24 @@ defmodule Spaceboy.MixProject do
 
   defp docs do
     [
+      authors: [
+        "Sgiath <sgiath@pm.me>",
+        "Steven vanZyl <rushsteve1@rushsteve1.us>"
+      ],
+      main: "Spaceboy.Server",
+      formatters: ["html"],
       source_url_patter: "https://git.sr.ht/~sgiath/spaceboy/tree/master/item/%{path}#L%{line}",
       # extra_section: "Guides",
-      formatters: ["html", "epub"],
       extras: extras(),
       groups_for_extras: groups_for_extras(),
       groups_for_modules: groups_for_modules(),
-      groups_for_functions: groups_for_functions()
+      groups_for_functions: groups_for_functions(),
+      nest_modules_by_prefix: [
+        Spaceboy.Middleware
+      ],
+      deps: [
+        plug: "https://hexdocs.pm/plug/"
+      ]
     ]
   end
 

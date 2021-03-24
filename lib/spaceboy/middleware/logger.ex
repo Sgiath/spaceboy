@@ -4,17 +4,15 @@ defmodule Spaceboy.Middleware.Logger do
 
   Use in your `Spaceboy.Server` implementation as:
 
-  ```
-  middleware Spaceboy.Middleware.Logger
-  ```
+      middleware Spaceboy.Middleware.Logger
 
   It takes optional config `:log_level` which sets the level at which the logs
   are logged. By default it is `:debug` level.
 
-  ```
-  middleware Spaceboy.Middleware.Logger, log_level: :info
-  ```
+      middleware Spaceboy.Middleware.Logger, log_level: :info
+
   """
+  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
 
   @behaviour Spaceboy.Middleware
 

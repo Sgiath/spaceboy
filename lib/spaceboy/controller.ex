@@ -10,37 +10,29 @@ defmodule Spaceboy.Controller do
 
   ## Options
 
-  * `:root` the directory containing templates that can be used with `render`.
-    Defaults to `lib/templates/`, same as Phoenix. You can ensure that it is
-    pulling from your project's folder with
-    ```
-    Application.app_dir(:example, "lib/templates/")
-    ```
+    * `:root` the directory containing templates that can be used with `render`.
+      Defaults to `lib/templates/`, same as Phoenix. You can ensure that it is
+      pulling from your project's folder with
+
+        Application.app_dir(:example, "lib/templates/")
 
   """
+  @moduledoc authors: ["Steven vanZyl <rushsteve1@rushsteve1.us>"]
 
   alias Spaceboy.Conn
   alias Spaceboy.Header
 
-  @doc false
-  defmacro __using__(options) do
-    quote bind_quoted: [options: options], unquote: true do
-      # The default root just assumes Elixir's usual functionality,
-      # and it is the user's responsibility to make sure it's right.
-      @spaceboy_root Keyword.get(options, :root, "lib/templates/")
+  defmacro __using__(opts) do
+    spaceboy_root = Keyword.get(opts, :root, "lib/templates/")
+
+    quote do
+      import Spaceboy.Conn
 
       alias Spaceboy.Conn
-      import Spaceboy.Conn
       alias Spaceboy.Controller
 
-      @doc ~S"""
-      Calls `Spaceboy.Controller.Render` with the appropriate file path,
-      relative to the `:root`.
-      """
-      @spec render(conn :: Conn.t(), template :: String.t(), assigns :: Keyword.t() | map) ::
-              String.t()
-      def render(conn, template, assigns \\ []) do
-        path = Path.join(@spaceboy_root, template)
+      def render(%Conn{} = conn, template, assigns \\ []) do
+        path = Path.join(unquote(spaceboy_root), template)
         Spaceboy.Controller.render(conn, path, assigns)
       end
     end

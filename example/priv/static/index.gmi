@@ -1,6 +1,7 @@
 # Example
 
 => / Home
+=> /static/gemlog.gmi Gemlog test file
 
 ## Second level header
 

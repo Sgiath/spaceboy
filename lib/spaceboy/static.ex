@@ -5,12 +5,22 @@ defmodule Spaceboy.Static do
   You are not supposed to use it directly but with `Spaceboy.Router.static/3`
   macro which nicely wraps its functionality.
   """
+  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
 
   alias Spaceboy.Conn
   alias Spaceboy.Utils
 
   @doc ~S"""
   Render appropriate content for the path
+
+  ## Options
+
+    * `:root` - filesystem root path for static files
+    * `:prefix` - URL prefix for the static files
+    * `:ls_dir?` - list files for dirs which doesn't have "index.gmi" (default
+      `true`)
+    * `:mime` - can be `:guess` or static MIME type for all files (default
+      `"text/gemini; charset=utf-8"`)
   """
   @spec render(conn :: Conn.t(), Keyword.t()) :: Conn.t()
   def render(%Conn{params: %{path: path}} = conn, opts \\ []) do
@@ -79,7 +89,7 @@ defmodule Spaceboy.Static do
       root: Utils.split(opts[:root]),
       prefix: Utils.split(opts[:prefix]),
       ls_dir?: Keyword.get(opts, :ls_dir?, true),
-      mime: Keyword.get(opts, :mime, "text/gemini")
+      mime: Keyword.get(opts, :mime, "text/gemini; charset=utf-8")
     }
   end
 end

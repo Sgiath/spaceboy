@@ -13,3 +13,6 @@ spaceboy-*.tar
 
 # Ignore generated certificates
 /example/priv/ssl/
+
+# Ignore patches
+*.patch

@@ -5,5 +5,3 @@ This page is a test of Spaceboy EEx templates
 Your random number is <%= num %>
 
 Server time: <%= DateTime.utc_now() %>
-
-<%= IO.ANSI.blue_background() %>This text is blue in terminal clients<%= IO.ANSI.reset() %>
