@@ -11,8 +11,9 @@ config :mime, :types, %{
 
 # Server configuration
 config :example, Example.Server,
-  host: "localhost",
+  bind: "0.0.0.0",
   port: 1965,
+  allowed_hosts: [],
   certfile: "priv/ssl/cert.pem",
   keyfile: "priv/ssl/key.pem"
 

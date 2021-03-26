@@ -7,6 +7,7 @@ defmodule Spaceboy.Adapter.Ranch do
   use GenServer
 
   alias Spaceboy.Handler
+  alias Spaceboy.Utils
 
   require Logger
 
@@ -24,6 +25,7 @@ defmodule Spaceboy.Adapter.Ranch do
       max_connections: :infinity,
       connection_type: :supervisor,
       socket_opts: [
+        ip: Utils.format_bind(opts[:bind]),
         port: opts[:port],
         certfile: opts[:certfile],
         keyfile: opts[:keyfile],

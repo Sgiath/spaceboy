@@ -38,11 +38,18 @@ defmodule Spaceboy.Server.Supervisor do
     |> Application.get_env(module, [])
     |> Keyword.put(:server, module)
     |> Keyword.put(:adapter, Spaceboy.Adapter.Ranch)
+    |> Keyword.put_new(:bind, "0.0.0.0")
+    |> Keyword.put_new(:port, 1965)
+    |> Keyword.put_new(:allowed_hosts, [])
+    |> Keyword.put_new(:certfile, "priv/ssl/cert.pem")
+    |> Keyword.put_new(:keyfile, "priv/ssl/key.pem")
   end
 
   defp log_access_url(mod, opts) do
-    Logger.info("Server #{inspect(mod)} started at 0.0.0.0:#{opts[:port]} (gemini)")
-    Logger.info("Access #{inspect(mod)} at gemini://#{opts[:host]}")
+    host = if opts[:allowed_hosts] == [], do: "localhost", else: hd(opts[:allowed_hosts])
+
+    Logger.info("Server #{inspect(mod)} started at #{opts[:bind]}:#{opts[:port]} (gemini)")
+    Logger.info("Access #{inspect(mod)} at gemini://#{host}")
   end
 
   defp check_certs(opts) do
@@ -60,8 +67,8 @@ defmodule Spaceboy.Server.Supervisor do
         config #{inspect(opts[:otp_app])}, #{inspect(opts[:server])},
           certfile: "path/to/cert/file.pem",
           keyfile: "path/to/key/file.pem"
-      #{IO.ANSI.red()}
-      Exiting because Gemini protocol requires TLS Certificate!
+
+      #{IO.ANSI.red()}Exiting because Gemini protocol requires TLS Certificate!
       #{IO.ANSI.reset()}
       """)
 

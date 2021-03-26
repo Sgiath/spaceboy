@@ -30,15 +30,19 @@ defmodule Spaceboy.Specification do
       iex> Spaceboy.Specification.check("gemini://user:password@localhost/\r\n")
       {:error, "URI cannot contain user info"}
 
+      iex> opts = [allowed_hosts: ["localhost"]]
+      iex> Spaceboy.Specification.check("gemini://example.com/\r\n", opts)
+      {:error, "Host example.com is not allowed"}
+
   """
-  def check(data) do
+  def check(data, opts \\ []) do
     with {:ok, data} <- end_with_crlf(data),
          {:ok, data} <- one_line(data),
          {:ok, data} <- max_length(data),
          %URI{} = data <- URI.parse(data),
          {:ok, data} <- scheme(data),
          {:ok, data} <- no_user_info(data),
-         {:ok, data} <- allowed_hosts(data) do
+         {:ok, data} <- allowed_hosts(data, opts[:allowed_hosts]) do
       {:ok, data}
     end
   end
@@ -73,8 +77,14 @@ defmodule Spaceboy.Specification do
   defp no_user_info(%URI{userinfo: nil} = data), do: {:ok, data}
   defp no_user_info(_data), do: {:error, "URI cannot contain user info"}
 
-  defp allowed_hosts(%URI{host: _host} = data) do
-    # TODO: check host agains "allowed_hosts" config?
-    {:ok, data}
+  defp allowed_hosts(%URI{} = data, nil), do: {:ok, data}
+  defp allowed_hosts(%URI{} = data, []), do: {:ok, data}
+
+  defp allowed_hosts(%URI{host: host} = data, hosts) do
+    if host in hosts do
+      {:ok, data}
+    else
+      {:error, "Host #{host} is not allowed"}
+    end
   end
 end

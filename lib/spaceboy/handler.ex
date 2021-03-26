@@ -9,7 +9,7 @@ defmodule Spaceboy.Handler do
   require Logger
 
   def request(data, info, opts) do
-    case Specification.check(data) do
+    case Specification.check(data, opts) do
       {:ok, data} ->
         try do
           info

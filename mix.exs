@@ -64,10 +64,10 @@ defmodule Spaceboy.MixProject do
         "Sgiath <sgiath@pm.me>",
         "Steven vanZyl <rushsteve1@rushsteve1.us>"
       ],
-      main: "Spaceboy.Server",
+      main: "overview",
       formatters: ["html"],
       source_url_patter: "https://git.sr.ht/~sgiath/spaceboy/tree/master/item/%{path}#L%{line}",
-      # extra_section: "Guides",
+      extra_section: "Guides",
       extras: extras(),
       groups_for_extras: groups_for_extras(),
       groups_for_modules: groups_for_modules(),
@@ -82,13 +82,19 @@ defmodule Spaceboy.MixProject do
   end
 
   defp extras do
-    []
+    [
+      # Introduction
+      "docs/introduction/overview.md",
+      "docs/introduction/installation.md",
+      # Guides
+      "docs/guides/deep-space-capsule.md"
+    ]
   end
 
   defp groups_for_extras do
     [
-      # Introduction: ~r/guides\/introduction\/.?/,
-      # Guides: ~r/guides\/[^\/]+\.md/
+      Introduction: ~r/docs\/introduction\/.?/,
+      Guides: ~r/docs\/guides\/.?/
     ]
   end
 
