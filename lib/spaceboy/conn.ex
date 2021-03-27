@@ -47,7 +47,7 @@ defmodule Spaceboy.Conn do
 
   ## Connection fields
 
-    * `:assigns` - user data (currently not used)
+    * `:assigns` - user data
     * `:halted` - the boolean status on whether the pipeline was halted
     * `:state` - the connection state
     * `:owner` - process which owns the connection
@@ -101,7 +101,7 @@ defmodule Spaceboy.Conn do
     field :before_send, [(t -> t)], default: []
 
     # Connection fields
-    field :assigns, map(), default: %{}
+    field :assigns, Keyword.t(), default: []
     field :owner, pid()
     field :halted, boolean(), default: false
     field :state, state(), default: :unset
@@ -121,6 +121,24 @@ defmodule Spaceboy.Conn do
   @spec execute_before_send(conn :: t) :: t
   def execute_before_send(%__MODULE__{before_send: before_send} = conn) do
     Enum.reduce(before_send, conn, fn bs, conn -> bs.(conn) end)
+  end
+
+  @doc ~S"""
+  Assigns a value to a key in the connection
+  """
+  @spec assign(conn :: t, key :: atom(), value :: term()) :: t
+  def assign(%__MODULE__{} = conn, key, value) when is_atom(key) do
+    put_in(conn, [:assigns, key], value)
+  end
+
+  @doc ~S"""
+  Assigns multiple values to keys in the connection.
+
+  Equivalent to multiple calls to `assign/3`
+  """
+  @spec merge_assigns(conn :: t, assigns :: Keyword.t()) :: t
+  def merge_assigns(%__MODULE__{} = conn, assigns) when is_list(assigns) do
+    Map.update!(conn, :assigns, &Keyword.merge(&1, assigns))
   end
 
   @doc ~S"""
@@ -176,6 +194,23 @@ defmodule Spaceboy.Conn do
 
   def file(%__MODULE__{state: status}, _file_path, _mime) when status in [:set, :set_file] do
     raise "Response already set"
+  end
+
+  @doc ~S"""
+  Set response as rendered template
+  """
+  @spec render(conn :: t, template :: Path.t(), mime :: String.t() | nil) :: t
+  def render(conn, template, mime \\ nil)
+
+  def render(%__MODULE__{} = conn, template, nil) do
+    render(conn, template, MIME.from_path(template))
+  end
+
+  def render(%__MODULE__{assigns: assigns} = conn, template, mime) do
+    assigns = Keyword.put(assigns, :conn, conn)
+    rendered = EEx.eval_file(template <> ".eex", assigns)
+
+    resp(conn, Header.success(mime), rendered)
   end
 
   @doc ~S"""

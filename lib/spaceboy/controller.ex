@@ -20,48 +20,24 @@ defmodule Spaceboy.Controller do
   @moduledoc authors: ["Steven vanZyl <rushsteve1@rushsteve1.us>"]
 
   alias Spaceboy.Conn
-  alias Spaceboy.Header
 
   defmacro __using__(opts) do
     spaceboy_root = Keyword.get(opts, :root, "lib/templates/")
 
     quote do
-      import Spaceboy.Conn
+      import Spaceboy.Conn, except: [render: 3]
 
       alias Spaceboy.Conn
       alias Spaceboy.Controller
 
+      @spec render(conn :: Conn.t(), template :: Path.t(), assigns :: Keyword.t()) :: Conn.t()
       def render(%Conn{} = conn, template, assigns \\ []) do
         path = Path.join(unquote(spaceboy_root), template)
-        Spaceboy.Controller.render(conn, path, assigns)
+
+        conn
+        |> Conn.merge_assigns(assigns)
+        |> Conn.render(path)
       end
     end
-  end
-
-  @doc ~S"""
-  Takes the connection, the name of a template, and a set of assignments then
-  renders the EEx template and sets it as the response to the connection.
-
-  The path to the template file should be absolute, without the `.eex` suffix.
-  """
-  @spec render(conn :: Conn.t(), template :: binary, assigns :: Keyword.t() | map) :: Conn.t()
-  def render(conn, template, assigns \\ [])
-
-  def render(conn, template, assigns) when is_binary(template) and is_map(assigns) do
-    render(conn, template, Map.to_list(assigns))
-  end
-
-  def render(conn, template, assigns) when is_binary(template) and is_list(assigns) do
-    mime = MIME.from_path(template)
-
-    assigns =
-      conn.assigns
-      |> Map.to_list()
-      |> Keyword.merge(assigns)
-      |> Keyword.put(:conn, conn)
-
-    rendered = EEx.eval_file(template <> ".eex", assigns)
-
-    Conn.resp(conn, Header.success(mime), rendered)
   end
 end
