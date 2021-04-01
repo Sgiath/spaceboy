@@ -74,11 +74,7 @@ defmodule Spaceboy.Server do
   @moduledoc authors: ["Sgiath <sgiath@pm.me"]
 
   defmacro __using__(opts) do
-    otp_app = Keyword.get(opts, :otp_app)
-
-    if is_nil(otp_app) do
-      raise ":otp_app needs to be set"
-    end
+    otp_app = opts[:otp_app] || raise ArgumentError, "expected :otp_app option to be set"
 
     quote do
       @behaviour Spaceboy.Middleware

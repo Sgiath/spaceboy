@@ -24,7 +24,8 @@ defmodule Spaceboy.Middleware do
         run(conn, middlewares)
 
       other ->
-        raise "expected #{inspect(module)} to return Spaceboy.Conn, got: #{inspect(other)}"
+        raise ArgumentError,
+              "expected #{inspect(module)} to return Spaceboy.Conn, got: #{inspect(other)}"
     end
   end
 

@@ -1,5 +1,8 @@
 defmodule Example.Controller do
-  use Spaceboy.Controller
+  use Spaceboy.Controller, root: "lib/templates"
+
+  alias Spaceboy.Conn
+  alias Spaceboy.PeerCert
 
   require Logger
 
@@ -60,7 +63,7 @@ defmodule Example.Controller do
   end
 
   def cert(%Conn{peer_cert: pc} = conn) do
-    data = Spaceboy.PeerCert.rdn(pc)
+    data = PeerCert.rdn(pc)
 
     gemini(conn, """
     # Example certificate page
@@ -70,6 +73,9 @@ defmodule Example.Controller do
     ```
     #{inspect(data)}
     ```
+
+    ## Fingerprint
+    #{PeerCert.fingerprint(pc)}
     """)
   end
 
@@ -84,6 +90,6 @@ defmodule Example.Controller do
   Serving single file as a response
   """
   def file(conn) do
-    file(conn, "priv/test.txt")
+    Conn.file(conn, "priv/test.txt")
   end
 end

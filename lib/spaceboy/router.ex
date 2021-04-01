@@ -38,7 +38,7 @@ defmodule Spaceboy.Router do
       def match(%Spaceboy.Conn{request_path: path} = conn, _catch_all) do
         Logger.warning("Page not found #{path}")
 
-        Spaceboy.Conn.not_found(conn)
+        Spaceboy.Controller.not_found(conn)
       end
     end
   end

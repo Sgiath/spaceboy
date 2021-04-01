@@ -147,25 +147,21 @@ defmodule Spaceboy.Conn do
   @spec resp(conn :: t, header :: Header.t(), body :: String.t() | nil) :: t
   def resp(conn, header, body \\ nil)
 
-  def resp(%__MODULE__{state: :unset} = conn, %Header{} = header, nil) do
+  def resp(%__MODULE__{} = conn, %Header{} = header, nil) do
     conn
     |> Map.put(:header, header)
     |> Map.put(:state, :set)
   end
 
-  def resp(%__MODULE__{state: :unset} = conn, %Header{code: 20} = header, body) do
+  def resp(%__MODULE__{} = conn, %Header{code: 20} = header, body) do
     conn
     |> Map.put(:header, header)
     |> Map.put(:body, body)
     |> Map.put(:state, :set)
   end
 
-  def resp(%__MODULE__{state: :unset}, %Header{code: code}, _body) do
-    raise "Cannot set body with response code #{code}"
-  end
-
-  def resp(%__MODULE__{state: state}, _header, _body) when state in [:set, :set_file] do
-    raise "Response is already set"
+  def resp(%__MODULE__{}, %Header{code: code}, _body) do
+    raise Spaceboy.OutOfSpecError, "Cannot set body with response code #{code}"
   end
 
   @doc ~S"""
@@ -177,88 +173,19 @@ defmodule Spaceboy.Conn do
   @spec file(conn :: t, file_path :: Path.t(), mime :: String.t() | nil) :: t
   def file(conn, file_path, mime \\ nil)
 
-  def file(%__MODULE__{state: :unset} = conn, file_path, nil) do
+  def file(%__MODULE__{} = conn, file_path, nil) do
     file(conn, file_path, MIME.from_path(file_path))
   end
 
-  def file(%__MODULE__{state: :unset} = conn, file_path, mime) do
+  def file(%__MODULE__{} = conn, file_path, mime) do
     if File.exists?(file_path) do
       conn
       |> Map.put(:header, Header.success(mime))
       |> Map.put(:body, file_path)
       |> Map.put(:state, :set_file)
     else
-      raise "File #{file_path} doesn't exists"
+      raise ArgumentError, "File #{file_path} doesn't exists"
     end
-  end
-
-  def file(%__MODULE__{state: status}, _file_path, _mime) when status in [:set, :set_file] do
-    raise "Response already set"
-  end
-
-  @doc ~S"""
-  Set response as rendered template
-  """
-  @spec render(conn :: t, template :: Path.t(), mime :: String.t() | nil) :: t
-  def render(conn, template, mime \\ nil)
-
-  def render(%__MODULE__{} = conn, template, nil) do
-    render(conn, template, MIME.from_path(template))
-  end
-
-  def render(%__MODULE__{assigns: assigns} = conn, template, mime) do
-    assigns = Keyword.put(assigns, :conn, conn)
-    rendered = EEx.eval_file(template <> ".eex", assigns)
-
-    resp(conn, Header.success(mime), rendered)
-  end
-
-  @doc ~S"""
-  Set text/gemini string as response
-  """
-  @spec gemini(conn :: t, content :: String.t()) :: t
-  def gemini(%__MODULE__{} = conn, content) when is_binary(content) do
-    resp(conn, Header.success(), content)
-  end
-
-  @doc ~S"""
-  Set map as JSON response
-  """
-  @spec json(conn :: t, content :: map()) :: t
-  def json(%__MODULE__{} = conn, content) when is_map(content) do
-    resp(conn, Header.success("application/json"), Jason.encode!(content))
-  end
-
-  @doc ~S"""
-  Set input response
-  """
-  @spec input(conn :: t, promt :: String.t()) :: t
-  def input(%__MODULE__{} = conn, prompt) do
-    resp(conn, Header.input(prompt))
-  end
-
-  @doc ~S"""
-  Set redirect response
-  """
-  @spec redirect(conn :: t, path :: String.t()) :: t
-  def redirect(%__MODULE__{} = conn, path) do
-    resp(conn, Header.redirect(path))
-  end
-
-  @doc ~S"""
-  Set not found response
-  """
-  @spec not_found(conn :: t, prompt :: String.t()) :: t
-  def not_found(%__MODULE__{} = conn, prompt \\ "Page not found") do
-    resp(conn, Header.not_found(prompt))
-  end
-
-  @doc ~S"""
-  Set client certificate required response
-  """
-  @spec auth_required(conn :: t, prompt :: String.t()) :: t
-  def auth_required(%__MODULE__{} = conn, prompt \\ "Certificate is missing") do
-    resp(conn, Header.client_certificate_required(prompt))
   end
 
   @doc ~S"""

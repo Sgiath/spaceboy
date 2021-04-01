@@ -44,7 +44,7 @@ defmodule Spaceboy.Handler do
   end
 
   defp response(%Conn{state: :unset}, _opts) do
-    raise "Response not set"
+    raise Spaceboy.OutOfSpecError, "Response not set"
   end
 
   defp response(%Conn{state: :set, body: nil, header: header} = conn, opts) do

@@ -8,6 +8,7 @@ defmodule Spaceboy.Static do
   @moduledoc authors: ["Sgiath <sgiath@pm.me"]
 
   alias Spaceboy.Conn
+  alias Spaceboy.Controller
   alias Spaceboy.Utils
 
   @doc ~S"""
@@ -53,10 +54,10 @@ defmodule Spaceboy.Static do
           |> Enum.map(&"=> /#{Path.join(opts[:prefix] ++ path)}/#{&1}")
           |> Enum.join("\n")
 
-        Conn.gemini(conn, dir_template(path, files))
+        Controller.gemini(conn, dir_template(path, files))
 
       true ->
-        Conn.not_found(conn)
+        Controller.not_found(conn)
     end
   end
 
@@ -71,7 +72,7 @@ defmodule Spaceboy.Static do
         Conn.file(conn, fs_path, mime)
 
       true ->
-        raise "Invalid MIME type. Expected :guess or binary. Got: #{inspect(opts[:mime])}"
+        raise ArgumentError, "expected :guess or binary as MIME, got: #{inspect(opts[:mime])}"
     end
   end
 

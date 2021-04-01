@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   @moduledoc ~S"""
   Generates self-signed certificate for localhost and saves it at `priv/ssl/`
 
-  Currently uses EC `prime256v1` as it is the most widely supported EC algorithm.
+  Currently uses EC `secp384r1` as it is the most widely supported EC algorithm.
   But once Erlang adds support for `ED25519` curve I will switch it to this one
   for security reasons and to promote good practices.
 
@@ -65,7 +65,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
     System.cmd("openssl", [
       "genpkey",
       "-algorithm=EC",
-      "-pkeyopt=ec_paramgen_curve:prime256v1",
+      "-pkeyopt=ec_paramgen_curve:secp384r1",
       "-pkeyopt=ec_param_enc:named_curve",
       "-out=#{@key_path}"
     ])

@@ -18,11 +18,11 @@ defmodule Spaceboy.Router.Builder do
   def convert(["*" | []], acc, params), do: {glob(:_, acc), build_params(params)}
 
   def convert(["*" <> _segment | segments], _acc, _params) do
-    raise "Glob pattern must be the last one. Got after: #{inspect(segments)}"
+    raise ArgumentError, "Glob pattern must be the last one. Got after: #{inspect(segments)}"
   end
 
   def convert(["*" | segments], _acc, _params) do
-    raise "Glob pattern must be the last one. Got after: #{inspect(segments)}"
+    raise ArgumentError, "Glob pattern must be the last one. Got after: #{inspect(segments)}"
   end
 
   def convert([segment | segments], acc, params) do
