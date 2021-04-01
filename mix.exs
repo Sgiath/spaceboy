@@ -34,7 +34,7 @@ defmodule Spaceboy.MixProject do
     [
       {:ranch, "~> 2.0"},
       {:jason, "~> 1.2"},
-      {:mime, "~> 1.5"},
+      {:mime, "~> 1.6"},
       {:typed_struct, "~> 0.2"},
       {:telemetry, "~> 0.4"},
 
