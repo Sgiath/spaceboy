@@ -1,7 +1,6 @@
 import Config
 
 # Logger
-
 # Just want info logs in production
 config :logger,
   level: :info,

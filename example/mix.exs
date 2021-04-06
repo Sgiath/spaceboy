@@ -3,11 +3,25 @@ defmodule Example.MixProject do
 
   def project do
     [
+      # App config
       app: :example,
       version: "0.1.0",
+
+      # Elixir config
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+
+      # Releases
+      default_release: :default,
+      releases: [
+        default: [
+          include_executables_for: [:unix],
+          applications: [
+            example: :permanent
+          ]
+        ]
+      ]
     ]
   end
 
