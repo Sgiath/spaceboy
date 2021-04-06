@@ -1,7 +1,7 @@
 defmodule Spaceboy.MixProject do
   use Mix.Project
 
-  @version "0.1.1"
+  @version "0.2.0"
 
   def project do
     [
@@ -53,8 +53,7 @@ defmodule Spaceboy.MixProject do
       links: %{
         "SourceHut project" => "https://sr.ht/~sgiath/spaceboy/",
         "Gemini specs" => "https://gemini.circumlunar.space/"
-      },
-      files: ~w(lib mix.exs .formatter.exs README.md)
+      }
     ]
   end
 
@@ -117,6 +116,7 @@ defmodule Spaceboy.MixProject do
       ],
       Internals: [
         Spaceboy.Header,
+        Spaceboy.Specification,
         Spaceboy.Static
       ]
     ]
