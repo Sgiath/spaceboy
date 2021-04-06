@@ -26,7 +26,7 @@ defmodule Spaceboy.MixProject do
 
   def application do
     [
-      extra_applications: [:logger, :ssl, :public_key, :eex]
+      extra_applications: [:logger, :eex]
     ]
   end
 
@@ -39,7 +39,7 @@ defmodule Spaceboy.MixProject do
       {:telemetry, "~> 0.4"},
 
       # Dev deps
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.5", only: :dev, runtime: false},
 
       # Docs dependencies
       {:ex_doc, "~> 0.24", only: :dev, runtime: false}
