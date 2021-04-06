@@ -16,6 +16,13 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   `priv/ssl/openssl.cnf` file manually, generate new certificate and it will use
   those values instead.
 
+  ## Options
+
+  You can specify how many days certificate should be valid. Default is 365 days
+  but you can specify different one (e.g. 100 years):
+
+      mix spaceboy.gen.cert --days 36500
+
   ## Dependencies
 
   This mix task is calling `openssl` program so you need to have it installed and
@@ -30,19 +37,16 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   @cnf_path "#{@root_path}/openssl.cnf"
   @cnf_default Application.app_dir(:spaceboy, "priv/openssl.cnf")
 
+  @switches [days: :integer]
+  @aliases [d: :days]
+
   @doc false
-  def run(_args) do
+  def run(args) do
+    {opts, _parsed} = OptionParser.parse!(args, strict: @switches, aliases: @aliases)
+
     copy_cnf()
     gen_pkey()
-    gen_cert()
-
-    IO.puts("""
-    \n#{IO.ANSI.yellow()}#{IO.ANSI.bright()}# TLS Certificate#{IO.ANSI.reset()}
-    Generated private key and self-signed certificate:
-
-      - #{@key_path}
-      - #{@cert_path}
-    """)
+    gen_cert(opts)
   end
 
   # Copy default cnf file if it doesn't exists
@@ -54,7 +58,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
 
       IO.puts("""
       \n#{IO.ANSI.yellow()}#{IO.ANSI.bright()}# OpenSSL Config#{IO.ANSI.reset()}
-      Created default openssl config file at "#{@cnf_path}".
+      Created default openssl config file at #{path(@cnf_path)}
       It won't be overwriten so you can edit it will be used on subsequent cert generations.
       """)
     end
@@ -62,25 +66,50 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
 
   # Generate private key
   defp gen_pkey do
-    System.cmd("openssl", [
-      "genpkey",
-      "-algorithm=EC",
-      "-pkeyopt=ec_paramgen_curve:secp384r1",
-      "-pkeyopt=ec_param_enc:named_curve",
-      "-out=#{@key_path}"
-    ])
+    IO.puts("\n#{IO.ANSI.yellow()}#{IO.ANSI.bright()}# Private Key#{IO.ANSI.reset()}")
+
+    if File.exists?(@key_path) do
+      IO.puts("""
+      Found private key at #{path(@key_path)}
+      Using existing key instead of generating new one.
+      """)
+    else
+      System.cmd("openssl", [
+        "genpkey",
+        "-algorithm=EC",
+        "-pkeyopt=ec_paramgen_curve:secp384r1",
+        "-pkeyopt=ec_param_enc:named_curve",
+        "-out=#{@key_path}"
+      ])
+
+      IO.puts("""
+      Generated new private key at #{path(@key_path)}
+      """)
+    end
   end
 
   # Generate and self-sign certificate
-  defp gen_cert do
+  defp gen_cert(opts) do
     System.cmd("openssl", [
       "req",
       "-new",
       "-x509",
-      "-days=1825",
+      "-days=#{Keyword.get(opts, :days, 365)}",
       "-key=#{@key_path}",
       "-out=#{@cert_path}",
       "-config=#{@cnf_path}"
     ])
+
+    IO.puts("""
+    \n#{IO.ANSI.yellow()}#{IO.ANSI.bright()}# TLS Certificate#{IO.ANSI.reset()}
+    Generated self-signed certificate at #{path(@cert_path)}
+    You can inspect your certificate with this command:
+
+        #{IO.ANSI.bright()}openssl x509 -in priv/ssl/cert.pem -text -noout#{IO.ANSI.reset()}
+    """)
+  end
+
+  defp path(text) do
+    "#{IO.ANSI.light_black()}#{IO.ANSI.italic()}#{text}#{IO.ANSI.reset()}"
   end
 end
