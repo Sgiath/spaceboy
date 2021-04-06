@@ -9,9 +9,9 @@ defmodule Spaceboy.Header do
 
   use TypedStruct
 
-  typedstruct enforce: true do
-    field :code, pos_integer()
-    field :meta, String.t() | pos_integer()
+  typedstruct do
+    field :code, pos_integer(), enforce: true
+    field :meta, String.t()
   end
 
   @doc ~S"""
@@ -28,6 +28,10 @@ defmodule Spaceboy.Header do
   """
   @doc category: :utils
   @spec format(header :: t) :: String.t()
+  def format(%__MODULE__{code: code, meta: nil}) do
+    "#{code}\r\n"
+  end
+
   def format(%__MODULE__{code: code, meta: meta}) do
     "#{code} #{meta}\r\n"
   end
@@ -67,62 +71,76 @@ defmodule Spaceboy.Header do
   # TEMPORARY FAILURE
 
   @doc category: :temporary_failure
-  @spec temporary_failure(reason :: String.t()) :: t
-  def temporary_failure(reason) when is_binary(reason), do: %__MODULE__{code: 40, meta: reason}
+  @spec temporary_failure(reason :: String.t() | nil) :: t
+  def temporary_failure(reason \\ nil) when is_nil(reason) or is_binary(reason),
+    do: %__MODULE__{code: 40, meta: reason}
 
   @doc category: :temporary_failure
-  @spec server_unavailable(reason :: String.t()) :: t
-  def server_unavailable(reason) when is_binary(reason), do: %__MODULE__{code: 41, meta: reason}
+  @spec server_unavailable(reason :: String.t() | nil) :: t
+  def server_unavailable(reason \\ nil) when is_nil(reason) or is_binary(reason),
+    do: %__MODULE__{code: 41, meta: reason}
 
   @doc category: :temporary_failure
-  @spec cgi_error(reason :: String.t()) :: t
-  def cgi_error(reason) when is_binary(reason), do: %__MODULE__{code: 42, meta: reason}
+  @spec cgi_error(reason :: String.t() | nil) :: t
+  def cgi_error(reason \\ nil) when is_nil(reason) or is_binary(reason),
+    do: %__MODULE__{code: 42, meta: reason}
 
   @doc category: :temporary_failure
-  @spec proxy_error(reason :: String.t()) :: t
-  def proxy_error(reason) when is_binary(reason), do: %__MODULE__{code: 43, meta: reason}
+  @spec proxy_error(reason :: String.t() | nil) :: t
+  def proxy_error(reason \\ nil) when is_nil(reason) or is_binary(reason),
+    do: %__MODULE__{code: 43, meta: reason}
 
   @doc category: :temporary_failure
-  @spec slow_down(wait_time :: pos_integer()) :: t
-  def slow_down(wait_time \\ 60) when is_integer(wait_time) and wait_time > 0,
-    do: %__MODULE__{code: 44, meta: wait_time}
+  @spec slow_down(message :: pos_integer() | String.t() | nil) :: t
+  def slow_down(message \\ nil)
+
+  def slow_down(wait_time) when is_integer(wait_time) and wait_time > 0,
+    do: slow_down("Too many requests. Wait #{wait_time} seconds.")
+
+  def slow_down(message) when is_nil(message) or is_binary(message),
+    do: %__MODULE__{code: 44, meta: message}
 
   # PERMANENT FAILURE
 
   @doc category: :permanent_failure
-  @spec permanent_failure(desc :: String.t()) :: t
-  def permanent_failure(desc) when is_binary(desc), do: %__MODULE__{code: 50, meta: desc}
+  @spec permanent_failure(desc :: String.t() | nil) :: t
+  def permanent_failure(desc \\ nil) when is_nil(desc) or is_binary(desc),
+    do: %__MODULE__{code: 50, meta: desc}
 
   @doc category: :permanent_failure
-  @spec not_found(desc :: String.t()) :: t
-  def not_found(desc) when is_binary(desc), do: %__MODULE__{code: 51, meta: desc}
+  @spec not_found(desc :: String.t() | nil) :: t
+  def not_found(desc \\ nil) when is_nil(desc) or is_binary(desc),
+    do: %__MODULE__{code: 51, meta: desc}
 
   @doc category: :permanent_failure
-  @spec gone(desc :: String.t()) :: t
-  def gone(desc) when is_binary(desc), do: %__MODULE__{code: 52, meta: desc}
+  @spec gone(desc :: String.t() | nil) :: t
+  def gone(desc \\ nil) when is_nil(desc) or is_binary(desc),
+    do: %__MODULE__{code: 52, meta: desc}
 
   @doc category: :permanent_failure
-  @spec proxy_request_refused(desc :: String.t()) :: t
-  def proxy_request_refused(desc) when is_binary(desc), do: %__MODULE__{code: 53, meta: desc}
+  @spec proxy_request_refused(desc :: String.t() | nil) :: t
+  def proxy_request_refused(desc \\ nil) when is_nil(desc) or is_binary(desc),
+    do: %__MODULE__{code: 53, meta: desc}
 
   @doc category: :permanent_failure
-  @spec bad_request(desc :: String.t()) :: t
-  def bad_request(desc) when is_binary(desc), do: %__MODULE__{code: 59, meta: desc}
+  @spec bad_request(desc :: String.t() | nil) :: t
+  def bad_request(desc \\ nil) when is_nil(desc) or is_binary(desc),
+    do: %__MODULE__{code: 59, meta: desc}
 
   # CLIENT CERTIFICATE
 
   @doc category: :certificate
-  @spec client_certificate_required(prompt :: String.t()) :: t
-  def client_certificate_required(prompt) when is_binary(prompt),
+  @spec client_certificate_required(prompt :: String.t() | nil) :: t
+  def client_certificate_required(prompt \\ nil) when is_nil(prompt) or is_binary(prompt),
     do: %__MODULE__{code: 60, meta: prompt}
 
   @doc category: :certificate
-  @spec certificate_not_authorised(prompt :: String.t()) :: t
-  def certificate_not_authorised(prompt) when is_binary(prompt),
+  @spec certificate_not_authorised(prompt :: String.t() | nil) :: t
+  def certificate_not_authorised(prompt \\ nil) when is_nil(prompt) or is_binary(prompt),
     do: %__MODULE__{code: 61, meta: prompt}
 
   @doc category: :certificate
-  @spec certificate_not_valid(prompt :: String.t()) :: t
-  def certificate_not_valid(prompt) when is_binary(prompt),
+  @spec certificate_not_valid(prompt :: String.t() | nil) :: t
+  def certificate_not_valid(prompt \\ nil) when is_nil(prompt) or is_binary(prompt),
     do: %__MODULE__{code: 62, meta: prompt}
 end
