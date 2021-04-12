@@ -42,10 +42,9 @@ defmodule Spaceboy.Static do
         # Index file
         opts = Map.put(opts, :mime, "text/gemini")
 
-        # Append "index.gmi" to the path
-        conn = update_in(conn, [:params, :path], &Kernel.++(&1, ["index.gmi"]))
-
-        render_file(conn, opts)
+        conn
+        |> update_in([:params, :path], &Kernel.++(&1, ["index.gmi"]))
+        |> render_file(opts)
 
       opts[:ls_dir?] ->
         files =

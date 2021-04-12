@@ -34,7 +34,7 @@ defmodule Example.MixProject do
 
   defp deps do
     [
-      {:spaceboy, path: "../"}
+      {:spaceboy, "~> 0.2"}
     ]
   end
 end

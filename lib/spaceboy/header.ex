@@ -28,7 +28,7 @@ defmodule Spaceboy.Header do
   """
   @doc category: :utils
   @spec format(header :: t) :: String.t()
-  def format(%__MODULE__{code: code, meta: nil}) do
+  def format(%__MODULE__{code: code, meta: nil}) when code >= 40 and code <= 69 do
     "#{code}\r\n"
   end
 

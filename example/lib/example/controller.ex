@@ -1,5 +1,6 @@
 defmodule Example.Controller do
-  use Spaceboy.Controller, root: "lib/templates"
+  use Spaceboy.Controller,
+    root: "lib/example/templates"
 
   alias Spaceboy.Conn
   alias Spaceboy.PeerCert

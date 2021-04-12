@@ -1,7 +1,8 @@
 FROM hexpm/elixir:1.11.4-erlang-23.3.1-alpine-3.13.3 AS build
 
 # install build dependencies
-RUN apk add --no-cache build-base git python3
+RUN --mount=type=cache,sharing=locked,target=/var/cache/apk \
+    apk add build-base git python3
 
 # prepare build dir
 WORKDIR /app
@@ -10,19 +11,14 @@ WORKDIR /app
 RUN mix do local.hex --force, local.rebar --force
 
 # set build ENV
-ENV MIX_ENV=prod
+ARG MIX_ENV=prod
 
 # Copy mix files
 COPY mix.exs mix.lock ./
 
 # Install dependencies
-RUN mix do deps.get --only ${MIX_ENV}
-
-# Copy configuration
-COPY config config
-
-# Compile dependencies
-RUN mix deps.compile
+RUN --mount=type=cache,target=/root/.hex \
+    mix deps.get --only ${MIX_ENV}
 
 # Copy source code
 COPY . ./
@@ -35,16 +31,17 @@ RUN mix do compile, release
 FROM alpine:3.13.3 AS app
 
 # Runtime dependencies
-RUN apk add --no-cache openssl ncurses-libs
+RUN --mount=type=cache,sharing=locked,target=/var/cache/apk \
+    apk add openssl ncurses-libs
 
-ENV USER="spaceboy"
-ENV HOME=/home/"${USER}"
-ENV APP_DIR="${HOME}/app"
+ARG USER="spaceboy"
+ARG HOME=/home/"${USER}"
+ARG APP_DIR="${HOME}/app"
 
 # Creates an unprivileged user to be used exclusively to run the Spaceboy app
 RUN addgroup -g 1000 -S "${USER}" && \
-  adduser -s /bin/sh -u 1000 -G "${USER}" -h "${HOME}" -D "${USER}" && \
-  su "${USER}" sh -c "mkdir ${APP_DIR}"
+    adduser -s /bin/sh -u 1000 -G "${USER}" -h "${HOME}" -D "${USER}" && \
+    su "${USER}" sh -c "mkdir ${APP_DIR}"
 
 # System settings
 WORKDIR /app
@@ -56,6 +53,6 @@ WORKDIR "${APP_DIR}"
 # Copy binaries
 COPY --from=build --chown="${USER}":"${USER}" /app/_build/prod/rel/default ./
 
+EXPOSE 1965
 ENTRYPOINT ["./bin/default"]
-
-CMD start
+CMD ["start"]
