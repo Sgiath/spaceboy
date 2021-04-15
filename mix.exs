@@ -84,9 +84,9 @@ defmodule Spaceboy.MixProject do
     [
       # Introduction
       "docs/introduction/overview.md",
-      "docs/introduction/installation.md",
+      "docs/introduction/installation.md"
       # Guides
-      "docs/guides/deep-space-capsule.md"
+      # "docs/guides/deep-space-capsule.md"
     ]
   end
 

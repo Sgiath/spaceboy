@@ -26,7 +26,7 @@ defmodule Spaceboy.Middleware.Logger do
   @impl Spaceboy.Middleware
   def call(%Conn{request_path: path} = conn, opts) do
     level = Keyword.get(opts, :log_level, :debug)
-    Logger.log(level, path)
+    Logger.log(level, path || "/")
 
     start = System.monotonic_time()
 

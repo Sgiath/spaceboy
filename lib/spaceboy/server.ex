@@ -17,7 +17,6 @@ defmodule Spaceboy.Server do
 
   ```elixir
   config :example, Example.Server,
-    bind: "0.0.0.0",
     port: 1965,
     allowed_hosts: [],
     certfile: "priv/ssl/cert.pem",
@@ -30,7 +29,6 @@ defmodule Spaceboy.Server do
   ```elixir
   def start(_type, _args) do
     config = [
-      bind: "0.0.0.0",
       port: 1965,
       allowed_hosts: [],
       certfile: "priv/ssl/cert.pem",
@@ -47,11 +45,6 @@ defmodule Spaceboy.Server do
 
   ### Other options
 
-    * `:bind` to which IP address bind the listening socket. By default it is
-      `"0.0.0.0"` which means "all addresses on the machine" which is good
-      option if you are running clasic public capsule but if you want to run for
-      example [Deep Space Capsule](deep-space-capsule.html) you need to bind it
-      to `"127.0.0.1"` for Tor to work.
     * `:port` port on which the server listens on.
     * `:allowed_hosts` this option dictates which hosts the server considers
       valid. By default it is empty list which means the check is skipped and any

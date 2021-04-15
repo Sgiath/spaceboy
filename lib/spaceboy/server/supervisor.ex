@@ -38,7 +38,6 @@ defmodule Spaceboy.Server.Supervisor do
     |> Application.get_env(module, [])
     |> Keyword.put(:server, module)
     |> Keyword.put(:adapter, Spaceboy.Adapter.Ranch)
-    |> Keyword.put_new(:bind, "0.0.0.0")
     |> Keyword.put_new(:port, 1965)
     |> Keyword.put_new(:allowed_hosts, [])
     |> Keyword.put_new(:certfile, "priv/ssl/cert.pem")
@@ -48,7 +47,7 @@ defmodule Spaceboy.Server.Supervisor do
   defp log_access_url(mod, opts) do
     host = if opts[:allowed_hosts] == [], do: "localhost", else: hd(opts[:allowed_hosts])
 
-    Logger.info("Server #{inspect(mod)} started at #{opts[:bind]}:#{opts[:port]} (gemini)")
+    Logger.info("Server #{inspect(mod)} started at 0.0.0.0:#{opts[:port]} (gemini)")
     Logger.info("Access #{inspect(mod)} at gemini://#{host}")
   end
 

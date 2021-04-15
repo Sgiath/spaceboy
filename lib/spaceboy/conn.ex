@@ -83,11 +83,11 @@ defmodule Spaceboy.Conn do
     field :scheme, :gemini, default: :gemini
     field :host, String.t(), default: "example.com"
     field :port, :inet.port_number(), default: 1965
-    field :remote_ip, :inet.ip_address()
+    field :peer_name, {:inet.ip_address(), :inet.port_number()}
+    field :peer_cert, binary() | :no_peercert, default: :no_peercert
     field :path_info, [String.t()], default: []
     field :request_path, String.t(), default: ""
     field :query_string, String.t()
-    field :peer_cert, binary() | :no_peercert, default: :no_peercert
 
     # Fetchable fields
     field :request_id, binary()

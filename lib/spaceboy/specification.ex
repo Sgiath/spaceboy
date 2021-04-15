@@ -36,14 +36,24 @@ defmodule Spaceboy.Specification do
 
   """
   def check(data, opts \\ []) do
-    with {:ok, data} <- end_with_crlf(data),
+    with {:ok, data} <- valid_utf8(data),
+         {:ok, data} <- end_with_crlf(data),
          {:ok, data} <- one_line(data),
          {:ok, data} <- max_length(data),
          %URI{} = data <- URI.parse(data),
          {:ok, data} <- scheme(data),
          {:ok, data} <- no_user_info(data),
+         {:ok, data} <- allowed_port(data, opts[:port]),
          {:ok, data} <- allowed_hosts(data, opts[:allowed_hosts]) do
       {:ok, data}
+    end
+  end
+
+  defp valid_utf8(data) do
+    if String.valid?(data) do
+      {:ok, data}
+    else
+      {:error, "URL contains not valid characters"}
     end
   end
 
@@ -72,10 +82,15 @@ defmodule Spaceboy.Specification do
   end
 
   defp scheme(%URI{scheme: "gemini"} = data), do: {:ok, data}
-  defp scheme(_data), do: {:error, "Scheme is not gemini"}
+  defp scheme(%URI{scheme: nil}), do: {:error, "Missing scheme"}
+  defp scheme(_data), do: {:error, 53, "Scheme is not gemini"}
 
   defp no_user_info(%URI{userinfo: nil} = data), do: {:ok, data}
   defp no_user_info(_data), do: {:error, "URI cannot contain user info"}
+
+  defp allowed_port(%URI{port: nil} = data, _port), do: {:ok, data}
+  defp allowed_port(%URI{port: port} = data, port), do: {:ok, data}
+  defp allowed_port(%URI{}, _port), do: {:error, 53, "Incorect port number"}
 
   defp allowed_hosts(%URI{} = data, nil), do: {:ok, data}
   defp allowed_hosts(%URI{} = data, []), do: {:ok, data}
@@ -84,7 +99,7 @@ defmodule Spaceboy.Specification do
     if host in hosts do
       {:ok, data}
     else
-      {:error, "Host #{host} is not allowed"}
+      {:error, 53, "Host #{host} is not allowed"}
     end
   end
 end

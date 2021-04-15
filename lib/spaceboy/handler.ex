@@ -25,6 +25,9 @@ defmodule Spaceboy.Handler do
 
       {:error, reason} ->
         out_of_spec(info, reason, opts)
+
+      {:error, code, reason} when is_integer(code) ->
+        error_response(info, code, reason, opts)
     end
   end
 
@@ -65,7 +68,7 @@ defmodule Spaceboy.Handler do
     opts[:adapter].send_file(conn.owner, Header.format(header), file)
   end
 
-  defp out_of_spec(info, reason, opts) do
+  defp out_of_spec(%{owner: owner}, reason, opts) do
     Logger.error("Got request out of spec: #{reason}")
 
     data =
@@ -73,7 +76,7 @@ defmodule Spaceboy.Handler do
       |> Header.bad_request()
       |> Header.format()
 
-    opts[:adapter].send(info.owner, data)
+    opts[:adapter].send(owner, data)
   end
 
   defp internal_server_error(%{owner: owner}, opts) do
@@ -83,6 +86,14 @@ defmodule Spaceboy.Handler do
       "Internal Server Error"
       |> Header.temporary_failure()
       |> Header.format()
+
+    opts[:adapter].send(owner, data)
+  end
+
+  defp error_response(%{owner: owner}, code, reason, opts) do
+    Logger.error("Got request out of spec: #{reason}")
+
+    data = Header.format(%Header{code: code, meta: reason})
 
     opts[:adapter].send(owner, data)
   end

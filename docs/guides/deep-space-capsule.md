@@ -48,6 +48,8 @@ is installed on your hosting machine. So here is the process:
       allowed_hosts: ["<your-onion-address-here>.onion"]
     ```
 
+  **_Note:_ this step is currently not supported!**
+
 * Now you can start your server and access it through Tor network!
 
 _Note:_ all credit goes to this guy who I blatantly copied

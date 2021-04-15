@@ -7,7 +7,6 @@ defmodule Spaceboy.Adapter.Ranch do
   use GenServer
 
   alias Spaceboy.Handler
-  alias Spaceboy.Utils
 
   require Logger
 
@@ -25,14 +24,14 @@ defmodule Spaceboy.Adapter.Ranch do
       max_connections: :infinity,
       connection_type: :supervisor,
       socket_opts: [
-        ip: Utils.format_bind(opts[:bind]),
-        port: opts[:port],
-        certfile: opts[:certfile],
-        keyfile: opts[:keyfile],
-        cacertfile: "/dev/null",
-        verify: :verify_peer,
-        verify_fun: {fn _cert, _event, _init_state -> {:valid, :unknown_user} end, []},
-        versions: [:"tlsv1.3"]
+        :inet6,
+        {:port, opts[:port]},
+        {:certfile, opts[:certfile]},
+        {:keyfile, opts[:keyfile]},
+        {:cacertfile, "/dev/null"},
+        {:verify, :verify_peer},
+        {:verify_fun, {fn _cert, _event, _init_state -> {:valid, :unknown_user} end, []}},
+        {:versions, [:"tlsv1.3"]}
       ]
     }
 
@@ -89,7 +88,9 @@ defmodule Spaceboy.Adapter.Ranch do
 
   @impl GenServer
   def terminate(_reason, state) do
-    :ranch_ssl.close(state[:socket])
+    unless is_nil(state[:socket]) do
+      :ranch_ssl.close(state[:socket])
+    end
   end
 
   @impl GenServer
@@ -112,15 +113,14 @@ defmodule Spaceboy.Adapter.Ranch do
 
   @impl GenServer
   def handle_info({:ssl, socket, data}, state) do
-    {:ok, {peer_ip, _peer_port}} = :ssl.peername(socket)
-    {:ok, {_local_ip, port}} = :ssl.sockname(socket)
-    {_status, peer_cert} = :ssl.peercert(socket)
+    {_status, peername} = :ssl.peername(socket)
+    {_status, peercert} = :ssl.peercert(socket)
 
     info = %{
       owner: self(),
-      port: port,
-      remote_ip: peer_ip,
-      peer_cert: peer_cert
+      port: state[:port],
+      peer_name: peername,
+      peer_cert: peercert
     }
 
     # TODO: is it good idea to launch it as Task?

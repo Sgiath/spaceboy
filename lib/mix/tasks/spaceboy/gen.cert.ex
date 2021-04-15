@@ -4,9 +4,10 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   @moduledoc ~S"""
   Generates self-signed certificate for localhost and saves it at `priv/ssl/`
 
-  Currently uses EC `secp384r1` as it is the most widely supported EC algorithm.
+  By default uses EC `prime256v1` as it is the most widely supported EC algorithm.
   But once Erlang adds support for `ED25519` curve I will switch it to this one
-  for security reasons and to promote good practices.
+  for security reasons and to promote good practices. If you want to use ED25519
+  even now you can use `--ed25519` option in this task.
 
   https://github.com/erlang/otp/issues/4637
 
@@ -23,6 +24,11 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
 
       mix spaceboy.gen.cert --days 36500
 
+  You can specify to generate private key with ED25519 algorithm (currently not
+  supported by Erlang):
+
+      mix spaceboy.gen.cert --ed25519
+
   ## Dependencies
 
   This mix task is calling `openssl` program so you need to have it installed and
@@ -37,7 +43,15 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   @cnf_path "#{@root_path}/openssl.cnf"
   @cnf_default Application.app_dir(:spaceboy, "priv/openssl.cnf")
 
-  @switches [days: :integer]
+  @secp [
+    "-algorithm=EC",
+    "-pkeyopt=ec_paramgen_curve:prime256v1"
+  ]
+  @ed25519 [
+    "-algorithm=ed25519"
+  ]
+
+  @switches [days: :integer, ed25519: :boolean]
   @aliases [d: :days]
 
   @doc false
@@ -45,7 +59,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
     {opts, _parsed} = OptionParser.parse!(args, strict: @switches, aliases: @aliases)
 
     copy_cnf()
-    gen_pkey()
+    gen_pkey(opts)
     gen_cert(opts)
   end
 
@@ -65,7 +79,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   end
 
   # Generate private key
-  defp gen_pkey do
+  defp gen_pkey(opts) do
     IO.puts("\n#{IO.ANSI.yellow()}#{IO.ANSI.bright()}# Private Key#{IO.ANSI.reset()}")
 
     if File.exists?(@key_path) do
@@ -74,13 +88,15 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
       Using existing key instead of generating new one.
       """)
     else
-      System.cmd("openssl", [
-        "genpkey",
-        "-algorithm=EC",
-        "-pkeyopt=ec_paramgen_curve:secp384r1",
-        "-pkeyopt=ec_param_enc:named_curve",
-        "-out=#{@key_path}"
-      ])
+      algo = if Keyword.get(opts, :ed25519, false), do: @ed25519, else: @secp
+
+      System.cmd(
+        "openssl",
+        [
+          "genpkey",
+          "-out=#{@key_path}"
+        ] ++ algo
+      )
 
       IO.puts("""
       Generated new private key at #{path(@key_path)}
