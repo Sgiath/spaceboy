@@ -32,16 +32,17 @@ defmodule Spaceboy.MixProject do
 
   defp deps do
     [
+      # Required
       {:ranch, "~> 2.0"},
-      {:jason, "~> 1.2"},
       {:mime, "~> 1.6"},
       {:typed_struct, "~> 0.2"},
-      {:telemetry, "~> 0.4"},
+
+      # Optional
+      {:jason, "~> 1.2", optional: true},
+      {:telemetry, "~> 0.4", optional: true},
 
       # Dev deps
       {:credo, "~> 1.5", only: :dev, runtime: false},
-
-      # Docs dependencies
       {:ex_doc, "~> 0.24", only: :dev, runtime: false}
     ]
   end

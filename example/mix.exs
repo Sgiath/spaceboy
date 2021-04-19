@@ -34,7 +34,9 @@ defmodule Example.MixProject do
 
   defp deps do
     [
-      {:spaceboy, path: "../"}
+      {:spaceboy, path: "../"},
+      {:jason, "~> 1.2"},
+      {:telemetry, "~> 0.4"}
     ]
   end
 end
