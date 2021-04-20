@@ -35,6 +35,7 @@ defmodule Spaceboy.Router do
 
   defmacro __before_compile__(_env) do
     quote do
+      @spec match(conn :: Spaceboy.Conn.t(), pattern :: [String.t()]) :: Spaceboy.Conn.t()
       def match(%Spaceboy.Conn{request_path: path} = conn, _catch_all) do
         Logger.warning("Page not found #{path}")
 
@@ -46,10 +47,12 @@ defmodule Spaceboy.Router do
   @doc ~S"""
   Adds route for URL
   """
+  @spec route(pattern :: String.t(), module :: module(), fun :: atom()) :: Macro.t()
   defmacro route(pattern, module, fun) when is_binary(pattern) do
     {pattern, params} = build(pattern)
 
     quote location: :keep do
+      @spec match(conn :: Spaceboy.Conn.t(), pattern :: [String.t()]) :: Spaceboy.Conn.t()
       def match(%Spaceboy.Conn{} = conn, unquote(pattern)) do
         conn = Spaceboy.Conn.fetch_params(%{conn | path_params: unquote(params)})
 
@@ -66,6 +69,7 @@ defmodule Spaceboy.Router do
   See `Spaceboy.Static.render/2` for options (`:root` and `:prefix` are populated
   automatically ;) )
   """
+  @spec static(prefix :: String.t(), root :: Path.t(), opts :: Keyword.t()) :: Macro.t()
   defmacro static(prefix, root, opts \\ []) do
     {pattern, params} = build(prefix <> "/*path")
 
@@ -75,6 +79,7 @@ defmodule Spaceboy.Router do
       |> Keyword.put(:prefix, prefix)
 
     quote location: :keep do
+      @spec match(conn :: Spaceboy.Conn.t(), pattern :: [String.t()]) :: Spaceboy.Conn.t()
       def match(%Spaceboy.Conn{} = conn, unquote(pattern)) do
         conn = Spaceboy.Conn.fetch_params(%Spaceboy.Conn{conn | path_params: unquote(params)})
 
@@ -86,10 +91,12 @@ defmodule Spaceboy.Router do
   @doc ~S"""
   Adds redirect
   """
+  @spec redirect(from :: String.t(), to :: String.t()) :: Macro.t()
   defmacro redirect(from, to) do
     {pattern, _params} = build(from)
 
     quote do
+      @spec match(conn :: Spaceboy.Conn.t(), pattern :: [String.t()]) :: Spaceboy.Conn.t()
       def match(%Spaceboy.Conn{} = conn, unquote(pattern)) do
         Spaceboy.Conn.redirect(conn, unquote(to))
       end

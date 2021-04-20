@@ -55,6 +55,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   @aliases [d: :days]
 
   @doc false
+  @impl Mix.Task
   def run(args) do
     {opts, _parsed} = OptionParser.parse!(args, strict: @switches, aliases: @aliases)
 

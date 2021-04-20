@@ -82,12 +82,14 @@ defmodule Spaceboy.Server do
         server_call(conn, opts)
       end
 
+      @spec start_link(opts :: Keyword.t()) :: Supervisor.on_start()
       def start_link(opts \\ []) do
         opts = Keyword.put(opts, :otp_app, unquote(otp_app))
 
         Spaceboy.Server.Supervisor.start_link(__MODULE__, opts)
       end
 
+      @spec child_spec(opts :: Keyword.t()) :: Supervisor.child_spec()
       def child_spec(opts) do
         %{
           id: __MODULE__,

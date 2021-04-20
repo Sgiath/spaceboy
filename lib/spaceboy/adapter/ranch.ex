@@ -81,9 +81,14 @@ defmodule Spaceboy.Adapter.Ranch do
     {:ok, socket} = :ranch.handshake(ref)
 
     # Set active mode
-    :ok = :ranch_ssl.setopts(socket, active: :once)
+    set_active(socket)
 
-    {:noreply, Keyword.put(state, :socket, socket)}
+    state =
+      state
+      |> Keyword.put(:socket, socket)
+      |> Keyword.put(:buffer, "")
+
+    {:noreply, state}
   end
 
   @impl GenServer
@@ -113,24 +118,31 @@ defmodule Spaceboy.Adapter.Ranch do
 
   @impl GenServer
   def handle_info({:ssl, socket, data}, state) do
-    {_status, peername} = :ssl.peername(socket)
-    {_status, peercert} = :ssl.peercert(socket)
+    if String.ends_with?(data, "\r\n") do
+      data = state[:buffer] <> data
 
-    info = %{
-      owner: self(),
-      port: state[:port],
-      peer_name: peername,
-      peer_cert: peercert
-    }
+      {_status, peername} = :ssl.peername(socket)
+      {_status, peercert} = :ssl.peercert(socket)
 
-    # TODO: is it good idea to launch it as Task?
-    {:ok, _pid} = Task.start(Handler, :request, [data, info, state])
+      info = %{
+        owner: self(),
+        port: state[:port],
+        peer_name: peername,
+        peer_cert: peercert
+      }
 
-    {:noreply, Keyword.put(state, :socket, socket)}
+      # TODO: is it good idea to launch it as Task?
+      {:ok, _pid} = Task.start(Handler, :request, [data, info, state])
+
+      {:noreply, Keyword.put(state, :socket, socket)}
+    else
+      set_active(socket)
+      {:noreply, Keyword.update!(state, :buffer, &(&1 <> data))}
+    end
   end
 
   def handle_info({:ssl_closed, socket}, state) do
-    Logger.warning("connection closed")
+    Logger.warning("client closed connection")
     {:stop, :shutdown, Keyword.put(state, :socket, socket)}
   end
 
@@ -142,5 +154,9 @@ defmodule Spaceboy.Adapter.Ranch do
   def handle_info({:ssl_passive, socket}, state) do
     Logger.warning("SSL passive mode")
     {:noreply, Keyword.put(state, :socket, socket)}
+  end
+
+  defp set_active(socket) do
+    :ranch_ssl.setopts(socket, active: :once)
   end
 end

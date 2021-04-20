@@ -16,19 +16,18 @@ you can use as starting point.
 - [x] static files serving
 - [x] common response predefined (gemini, json, not found, etc.)
 - [-] documentation
-  - [ ] README
+  - [-] README
   - [x] in code documentation
-  - [ ] guides and instructions
+  - [-] guides and instructions
 - [x] advanced work with client certificates
 - [x] telemetry
-- [ ] session tracking based on client certificate
-- [ ] easy statistics for servers (number of visits, etc.)
 - [x] templating support
   - [x] Gemini files
   - [x] ANSI files (maybe?)
   - [x] other MIME types?
-- [ ] simple integration with Ecto for building more complex applications (how?
-      what? is it necessary?)
+- [ ] session tracking based on client certificate
+- [ ] easy statistics for servers (number of visits, etc.)
+- [ ] easy to use testing framework
 
 ## Contributing
 
