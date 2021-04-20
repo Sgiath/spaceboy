@@ -8,6 +8,7 @@ defmodule Spaceboy.Handler do
 
   require Logger
 
+  @spec request(data :: binary(), info :: map(), opts :: Keyword.t()) :: :ok
   def request(data, info, opts) do
     case Specification.check(data, opts) do
       {:ok, data} ->

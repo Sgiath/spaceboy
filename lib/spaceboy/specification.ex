@@ -14,27 +14,9 @@ defmodule Spaceboy.Specification do
       iex> Spaceboy.Specification.check("gemini://localhost/\r\n")
       {:ok, %URI{authority: "localhost", host: "localhost", path: "/", scheme: "gemini"}}
 
-      iex> Spaceboy.Specification.check("gemini://localhost/")
-      {:error, "Missing CRLF sequence"}
-
-      iex> Spaceboy.Specification.check("gemini://localhost/\r\nsecond line\r\n")
-      {:error, "Multiple lines received"}
-
-      iex> data = String.duplicate("a", 1025) <> "\r\n"
-      iex> Spaceboy.Specification.check(data)
-      {:error, "Too much data"}
-
-      iex> Spaceboy.Specification.check("https://localhost/\r\n")
-      {:error, "Scheme is not gemini"}
-
-      iex> Spaceboy.Specification.check("gemini://user:password@localhost/\r\n")
-      {:error, "URI cannot contain user info"}
-
-      iex> opts = [allowed_hosts: ["localhost"]]
-      iex> Spaceboy.Specification.check("gemini://example.com/\r\n", opts)
-      {:error, "Host example.com is not allowed"}
-
   """
+  @spec check(data :: binary(), opts :: Keyword.t()) ::
+          {:ok, URI.t()} | {:error, String.t()} | {:error, integer(), String.t()}
   def check(data, opts \\ []) do
     with {:ok, data} <- valid_utf8(data),
          {:ok, data} <- end_with_crlf(data),
@@ -88,7 +70,7 @@ defmodule Spaceboy.Specification do
   defp no_user_info(%URI{userinfo: nil} = data), do: {:ok, data}
   defp no_user_info(_data), do: {:error, "URI cannot contain user info"}
 
-  defp allowed_port(%URI{port: nil} = data, _port), do: {:ok, data}
+  defp allowed_port(%URI{port: nil} = data, 1965), do: {:ok, data}
   defp allowed_port(%URI{port: port} = data, port), do: {:ok, data}
   defp allowed_port(%URI{}, _port), do: {:error, 53, "Incorect port number"}
 

@@ -5,6 +5,7 @@ defmodule Spaceboy.Server.Supervisor do
 
   require Logger
 
+  @spec start_link(module(), Keyword.t()) :: Supervisor.on_start()
   def start_link(module, opts \\ []) do
     otp_app = Keyword.get(opts, :otp_app)
 
@@ -25,6 +26,7 @@ defmodule Spaceboy.Server.Supervisor do
     end
   end
 
+  @impl Supervisor
   def init(opts) do
     children = [
       {opts[:adapter], opts}

@@ -79,6 +79,8 @@ defmodule Spaceboy.Conn do
   @type state :: :unset | :set | :set_file | :sent
 
   typedstruct do
+    @typedoc "Connection struct which holds all the data related to Gemini connection"
+
     # Request fields
     field :scheme, :gemini, default: :gemini
     field :host, String.t(), default: "example.com"
@@ -120,7 +122,9 @@ defmodule Spaceboy.Conn do
   @doc false
   @spec execute_before_send(conn :: t) :: t
   def execute_before_send(%__MODULE__{before_send: before_send} = conn) do
-    Enum.reduce(before_send, conn, fn bs, conn -> bs.(conn) end)
+    before_send
+    |> Enum.reverse()
+    |> Enum.reduce(conn, fn bs, conn -> bs.(conn) end)
   end
 
   @doc ~S"""

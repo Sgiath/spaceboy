@@ -1,6 +1,7 @@
 defmodule Spaceboy.Router.Builder do
   @moduledoc false
 
+  @spec convert(segments :: [String.t()], acc :: [Macro.t()], params :: [Macro.t()]) :: Macro.t()
   def convert(segments, acc \\ [], params \\ [])
 
   def convert([":" <> segment | segments], acc, params) do

@@ -10,9 +10,14 @@ defmodule Spaceboy.Header do
   use TypedStruct
 
   typedstruct do
+    @typedoc "Struct representing Gemini header data"
+
     field :code, pos_integer(), enforce: true
     field :meta, String.t()
   end
+
+  defguard is_status_code(code) when is_integer(code) and code >= 10 and code <= 69
+  defguard is_error_code(code) when is_status_code(code) and code >= 40 and code <= 69
 
   @doc ~S"""
   Correctly format the response header
@@ -28,11 +33,11 @@ defmodule Spaceboy.Header do
   """
   @doc category: :utils
   @spec format(header :: t) :: String.t()
-  def format(%__MODULE__{code: code, meta: nil}) when code >= 40 and code <= 69 do
+  def format(%__MODULE__{code: code, meta: nil}) when is_error_code(code) do
     "#{code}\r\n"
   end
 
-  def format(%__MODULE__{code: code, meta: meta}) do
+  def format(%__MODULE__{code: code, meta: meta}) when is_status_code(code) and is_binary(meta) do
     "#{code} #{meta}\r\n"
   end
 

@@ -18,6 +18,7 @@ defmodule Spaceboy.Middleware do
   If any of the plugs halt, the remaining plugs are not invoked. If the given
   connection was already halted, none of the plugs are invoked either.
   """
+  @spec run(conn :: Conn.t(), [{module(), Keyword.t()}]) :: Conn.t()
   def run(%Conn{halted: false} = conn, [{module, opts} | middlewares]) do
     case module.call(conn, module.init(opts)) do
       %Conn{} = conn ->
