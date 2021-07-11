@@ -1,4 +1,4 @@
-FROM hexpm/elixir:1.11.4-erlang-23.3.1-alpine-3.13.3 AS build
+FROM hexpm/elixir:1.12.0-erlang-24.0-alpine-3.13.3 AS build
 
 # install build dependencies
 RUN --mount=type=cache,sharing=locked,target=/var/cache/apk \

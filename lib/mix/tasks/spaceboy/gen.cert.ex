@@ -5,11 +5,9 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   Generates self-signed certificate for localhost and saves it at `priv/ssl/`
 
   By default uses EC `prime256v1` as it is the most widely supported EC algorithm.
-  But once Erlang adds support for `ED25519` curve I will switch it to this one
+  But once support for `ED25519` curve will grow I will switch it to this one
   for security reasons and to promote good practices. If you want to use ED25519
   even now you can use `--ed25519` option in this task.
-
-  https://github.com/erlang/otp/issues/4637
 
   When first used it copies default `openssl.cnf` to your `priv/ssl/` directory
   and generates self-sgined certificate for `localhost` and `127.0.0.1`. If you
@@ -24,8 +22,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
 
       mix spaceboy.gen.cert --days 36500
 
-  You can specify to generate private key with ED25519 algorithm (currently not
-  supported by Erlang):
+  You can specify to generate private key with ED25519 algorithm:
 
       mix spaceboy.gen.cert --ed25519
 
@@ -44,7 +41,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   @cnf_default Application.app_dir(:spaceboy, "priv/openssl.cnf")
 
   @secp [
-    "-algorithm=EC",
+    "-algorithm=ec",
     "-pkeyopt=ec_paramgen_curve:prime256v1"
   ]
   @ed25519 [
@@ -74,7 +71,8 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
       IO.puts("""
       \n#{IO.ANSI.yellow()}#{IO.ANSI.bright()}# OpenSSL Config#{IO.ANSI.reset()}
       Created default openssl config file at #{path(@cnf_path)}
-      It won't be overwriten so you can edit it will be used on subsequent cert generations.
+      It won't be overwriten so you can edit it and it will be used on subsequent cert
+      generations.
       """)
     end
   end
@@ -122,7 +120,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
     Generated self-signed certificate at #{path(@cert_path)}
     You can inspect your certificate with this command:
 
-        #{IO.ANSI.bright()}openssl x509 -in priv/ssl/cert.pem -text -noout#{IO.ANSI.reset()}
+        #{IO.ANSI.bright()}openssl x509 -in #{@cert_path} -text -noout#{IO.ANSI.reset()}
     """)
   end
 

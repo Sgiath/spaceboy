@@ -74,9 +74,6 @@ defmodule Example.Controller do
     ```
     #{inspect(data)}
     ```
-
-    ## Fingerprint
-    #{PeerCert.fingerprint(pc)}
     """)
   end
 

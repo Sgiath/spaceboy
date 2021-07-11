@@ -6,7 +6,7 @@ if Code.ensure_loaded?(:telemetry) do
     This middleware is only defined if you manually install optional dependency
     `:telemetry`.
 
-          {:telemetry, "~> 0.4"},
+          {:telemetry, "~> 1.0"},
 
     When plugged, the event prefix is a required option:
 

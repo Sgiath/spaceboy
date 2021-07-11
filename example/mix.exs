@@ -8,7 +8,7 @@ defmodule Example.MixProject do
       version: "0.1.0",
 
       # Elixir config
-      elixir: "~> 1.11",
+      elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
 
@@ -36,7 +36,7 @@ defmodule Example.MixProject do
     [
       {:spaceboy, path: "../"},
       {:jason, "~> 1.2"},
-      {:telemetry, "~> 0.4"}
+      {:telemetry, "~> 1.0"}
     ]
   end
 end

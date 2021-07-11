@@ -7,7 +7,7 @@ defmodule Spaceboy.MixProject do
     [
       app: :spaceboy,
       version: @version,
-      elixir: "~> 1.11",
+      elixir: "~> 1.12",
       consolidate_protocols: Mix.env() != :test,
       deps: deps(),
       package: package(),
@@ -26,7 +26,7 @@ defmodule Spaceboy.MixProject do
 
   def application do
     [
-      extra_applications: [:logger, :eex, :public_key]
+      extra_applications: [:logger, :eex, :public_key, :ssh]
     ]
   end
 
@@ -39,7 +39,7 @@ defmodule Spaceboy.MixProject do
 
       # Optional
       {:jason, "~> 1.2", optional: true},
-      {:telemetry, "~> 0.4", optional: true},
+      {:telemetry, "~> 1.0", optional: true},
 
       # Dev deps
       {:credo, "~> 1.5", only: :dev, runtime: false},
