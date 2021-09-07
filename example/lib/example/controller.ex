@@ -22,6 +22,7 @@ defmodule Example.Controller do
     => /template Template test
     => /static Folder test
     => /static/projects Folder without index.gmi
+    => /robots.txt Robots file
 
     Server time: #{DateTime.utc_now()}
     """)

@@ -5,7 +5,7 @@ defmodule Spaceboy.Static do
   You are not supposed to use it directly but with `Spaceboy.Router.static/3`
   macro which nicely wraps its functionality.
   """
-  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
+  @moduledoc authors: ["Sgiath <sgiath@sgiath.dev>"]
 
   alias Spaceboy.Conn
   alias Spaceboy.Controller
@@ -23,7 +23,7 @@ defmodule Spaceboy.Static do
     * `:mime` - can be `:guess` or static MIME type for all files (default
       `"text/gemini; charset=utf-8"`)
   """
-  @spec render(conn :: Conn.t(), Keyword.t()) :: Conn.t()
+  @spec render(conn :: Conn.t(), opts :: Keyword.t()) :: Conn.t()
   def render(%Conn{params: %{path: path}} = conn, opts \\ []) do
     opts = normalize(opts)
 

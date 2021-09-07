@@ -34,7 +34,7 @@ if Code.ensure_loaded?(:telemetry) do
     The `:duration` measurements are presented in the `:native` time unit.
     You can read more about it in the docs for `System.convert_time_unit/3`.
     """
-    @moduledoc authors: ["Sgiath <sgiath@pm.me"]
+    @moduledoc authors: ["Sgiath <sgiath@sgiath.dev>"]
 
     @behaviour Spaceboy.Middleware
 

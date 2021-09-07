@@ -34,7 +34,7 @@ defmodule Spaceboy.MixProject do
     [
       # Required
       {:ranch, "~> 2.0"},
-      {:mime, "~> 1.6"},
+      {:mime, "~> 2.0"},
       {:typed_struct, "~> 0.2"},
 
       # Optional
@@ -43,13 +43,13 @@ defmodule Spaceboy.MixProject do
 
       # Dev deps
       {:credo, "~> 1.5", only: :dev, runtime: false},
-      {:ex_doc, "~> 0.24", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.25", only: :dev, runtime: false}
     ]
   end
 
   defp package do
     [
-      maintainers: ["Sgiath <sgiath@pm.me>"],
+      maintainers: ["Sgiath <sgiath@sgiath.dev>"],
       licenses: ["WTFPL"],
       links: %{
         "SourceHut project" => "https://sr.ht/~sgiath/spaceboy/",
@@ -61,7 +61,7 @@ defmodule Spaceboy.MixProject do
   defp docs do
     [
       authors: [
-        "Sgiath <sgiath@pm.me>",
+        "Sgiath <sgiath@sgiath.dev>",
         "Steven vanZyl <rushsteve1@rushsteve1.us>"
       ],
       main: "overview",

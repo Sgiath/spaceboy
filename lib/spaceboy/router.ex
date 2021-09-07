@@ -9,7 +9,7 @@ defmodule Spaceboy.Router do
   `Spaceboy.Router` is usually last middleware in your `Spaceboy.Server` but it
   is not requirement.
   """
-  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
+  @moduledoc authors: ["Sgiath <sgiath@sgiath.dev>"]
 
   alias Spaceboy.Router.Builder
   alias Spaceboy.Utils
@@ -20,7 +20,7 @@ defmodule Spaceboy.Router do
 
       @before_compile Spaceboy.Router
 
-      import Spaceboy.Router, only: [route: 3, static: 2, static: 3]
+      import Spaceboy.Router, only: [route: 3, static: 2, static: 3, robots: 1]
 
       require Logger
 
@@ -84,6 +84,24 @@ defmodule Spaceboy.Router do
         conn = Spaceboy.Conn.fetch_params(%Spaceboy.Conn{conn | path_params: unquote(params)})
 
         Spaceboy.Static.render(conn, unquote(opts))
+      end
+    end
+  end
+
+  @doc ~S"""
+  Render /robots.txt file
+
+  ## Options
+
+  List of paths which should be disallowed for robots to crawl
+  """
+  defmacro robots(paths) do
+    {pattern, _params} = build("/robots.txt")
+    paths = if is_list(paths), do: %{"*" => paths}, else: paths
+
+    quote location: :keep do
+      def match(%Spaceboy.Conn{} = conn, unquote(pattern)) do
+        Spaceboy.Robots.render(conn, unquote(paths))
       end
     end
   end

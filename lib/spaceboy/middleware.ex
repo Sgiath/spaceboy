@@ -5,7 +5,7 @@ defmodule Spaceboy.Middleware do
   Middleware has to implement two functions `c:init/1` and `c:call/2`. For example
   implementation of middleware please look at `Spaceboy.Middleware.Logger` module.
   """
-  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
+  @moduledoc authors: ["Sgiath <sgiath@sgiath.dev>"]
 
   alias Spaceboy.Conn
 

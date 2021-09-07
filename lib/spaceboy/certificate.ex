@@ -2,7 +2,7 @@ defmodule Spaceboy.PeerCert do
   @moduledoc ~S"""
   Utility functions to ease the work with Peer Certificates
   """
-  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
+  @moduledoc authors: ["Sgiath <sgiath@sgiath.dev>"]
 
   require Record
 

@@ -56,7 +56,7 @@ defmodule Spaceboy.Conn do
   `:unset` but is changed to `:set` or `:set_file` when response is set. Its
   final result is `:sent`.
   """
-  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
+  @moduledoc authors: ["Sgiath <sgiath@sgiath.dev>"]
 
   @behaviour Access
 

@@ -4,7 +4,7 @@ defmodule Spaceboy.Specification do
 
   https://gitlab.com/gemini-specification/protocol/-/blob/master/specification.gmi
   """
-  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
+  @moduledoc authors: ["Sgiath <sgiath@sgiath.dev>"]
 
   @doc ~S"""
   Check the received data against Gemini specification

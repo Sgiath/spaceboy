@@ -12,7 +12,7 @@ defmodule Spaceboy.Middleware.Logger do
       middleware Spaceboy.Middleware.Logger, log_level: :info
 
   """
-  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
+  @moduledoc authors: ["Sgiath <sgiath@sgiath.dev>"]
 
   @behaviour Spaceboy.Middleware
 

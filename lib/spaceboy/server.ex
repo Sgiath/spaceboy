@@ -64,7 +64,7 @@ defmodule Spaceboy.Server do
 
   and you need to recompile `MIME` library: `mix deps.clean mime --build`
   """
-  @moduledoc authors: ["Sgiath <sgiath@pm.me"]
+  @moduledoc authors: ["Sgiath <sgiath@sgiath.dev>"]
 
   defmacro __using__(opts) do
     otp_app = opts[:otp_app] || raise ArgumentError, "expected :otp_app option to be set"

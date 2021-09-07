@@ -3,6 +3,11 @@ defmodule Example.Router do
 
   alias Example.Controller
 
+  @private_paths [
+    "/user/",
+    "/cert"
+  ]
+
   route "/", Controller, :index
   route "/user", Controller, :users
   route "/user/:user_id", Controller, :user
@@ -11,4 +16,5 @@ defmodule Example.Router do
   route "/template", Controller, :template
 
   static "/static", "priv/static"
+  robots @private_paths
 end

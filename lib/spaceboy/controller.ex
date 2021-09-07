@@ -81,6 +81,14 @@ defmodule Spaceboy.Controller do
   end
 
   @doc ~S"""
+  Set text/plain string as response
+  """
+  @spec text(conn :: Conn.t(), content :: String.t()) :: Conn.t()
+  def text(%Conn{} = conn, content) when is_binary(content) do
+    Conn.resp(conn, Header.success("text/plain"), content)
+  end
+
+  @doc ~S"""
   Set input response
   """
   @spec input(conn :: Conn.t(), promt :: String.t()) :: Conn.t()

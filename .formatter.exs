@@ -7,7 +7,8 @@ locals_without_parens = [
   route: 3,
   static: 2,
   static: 3,
-  redirect: 2
+  redirect: 2,
+  robots: 1
 ]
 
 [
