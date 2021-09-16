@@ -33,7 +33,7 @@ defmodule Spaceboy.MixProject do
   defp deps do
     [
       # Required
-      {:ranch, "~> 2.0"},
+      {:ranch, "~> 2.1"},
       {:mime, "~> 2.0"},
       {:typed_struct, "~> 0.2"},
 
