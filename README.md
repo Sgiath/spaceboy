@@ -28,6 +28,7 @@ you can use as starting point.
 - [ ] session tracking based on client certificate
 - [ ] easy statistics for servers (number of visits, etc.)
 - [ ] easy to use testing framework
+- [ ] hot code reload
 
 ## Contributing
 

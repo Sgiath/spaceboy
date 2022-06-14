@@ -18,6 +18,7 @@ defmodule Spaceboy.Specification do
   @spec check(data :: binary(), opts :: Keyword.t()) ::
           {:ok, URI.t()} | {:error, String.t()} | {:error, integer(), String.t()}
   def check(data, opts \\ []) do
+    # credo:disable-for-next-line
     with {:ok, data} <- valid_utf8(data),
          {:ok, data} <- end_with_crlf(data),
          {:ok, data} <- one_line(data),

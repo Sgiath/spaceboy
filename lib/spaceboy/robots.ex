@@ -24,8 +24,6 @@ defmodule Spaceboy.Robots do
   end
 
   defp disallowed(paths) do
-    paths
-    |> Enum.map(&"Disallow: #{&1}")
-    |> Enum.join("\n")
+    Enum.map_join(paths, "\n", &"Disallow: #{&1}")
   end
 end

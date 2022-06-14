@@ -62,19 +62,8 @@ defmodule Spaceboy.Conn do
 
   use TypedStruct
 
+  alias Spaceboy.Conn.Unfetched
   alias Spaceboy.Header
-
-  typedstruct module: Unfetched do
-    @moduledoc false
-
-    @typedoc """
-    A struct used as default on unfetched fields.
-
-    The `:aspect` key of the struct specifies what field is still unfetched.
-    """
-
-    field :aspect, :query_params | :path_params | :params
-  end
 
   @type state :: :unset | :set | :set_file | :sent
 

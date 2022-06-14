@@ -40,7 +40,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   @cnf_path "#{@root_path}/openssl.cnf"
   @cnf_default Application.app_dir(:spaceboy, "priv/openssl.cnf")
 
-  @secp [
+  @ec [
     "-algorithm=ec",
     "-pkeyopt=ec_paramgen_curve:prime256v1"
   ]
@@ -87,7 +87,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
       Using existing key instead of generating new one.
       """)
     else
-      algo = if Keyword.get(opts, :ed25519, false), do: @ed25519, else: @secp
+      algo = if Keyword.get(opts, :ed25519, false), do: @ed25519, else: @ec
 
       System.cmd(
         "openssl",

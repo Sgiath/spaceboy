@@ -1,8 +1,16 @@
-FROM hexpm/elixir:1.12.0-erlang-24.0-alpine-3.13.3 AS build
+ARG ELIXIR_VERSION=1.13.4
+ARG OTP_VERSION=25.0
+ARG ALPINE_VERSION=3.15.4
+
+ARG BUILD_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-alpine-${ALPINE_VERSION}"
+ARG RUN_IMAGE="alpine:${ALPINE_VERSION}"
+
+# ================================================================================================
+
+FROM ${BUILD_IMAGE} as build
 
 # install build dependencies
-RUN --mount=type=cache,sharing=locked,target=/var/cache/apk \
-    apk add build-base git python3
+RUN apk add build-base git python3
 
 # prepare build dir
 WORKDIR /app
@@ -17,41 +25,47 @@ ARG MIX_ENV=prod
 COPY mix.exs mix.lock ./
 
 # Install dependencies
-RUN --mount=type=cache,target=/root/.hex \
-    mix deps.get --only ${MIX_ENV}
+RUN mix deps.get --only ${MIX_ENV}
+
+# Copy configuration
+RUN mkdir config
+COPY config/config.exs config/${MIX_ENV}.exs config/
+
+# Compile dependencies
+RUN mix deps.compile
 
 # Copy source code
-COPY . ./
+COPY lib lib
+
+# Compile
+COPY priv priv
+RUN mix compile
+
+# Changes to config/runtime.exs don't require recompiling the code
+COPY config/runtime.exs config/
 
 # Assemble release
-RUN mix do compile, release
+COPY rel rel
+RUN mix release
 
 # ================================================================================================
 
-FROM alpine:3.13.3 AS app
+FROM ${RUN_IMAGE}
 
 # Runtime dependencies
-RUN --mount=type=cache,sharing=locked,target=/var/cache/apk \
-    apk add openssl ncurses-libs
-
-ARG USER="spaceboy"
-ARG HOME=/home/"${USER}"
-ARG APP_DIR="${HOME}/app"
-
-# Creates an unprivileged user to be used exclusively to run the Spaceboy app
-RUN addgroup -g 1000 -S "${USER}" && \
-    adduser -s /bin/sh -u 1000 -G "${USER}" -h "${HOME}" -D "${USER}" && \
-    su "${USER}" sh -c "mkdir ${APP_DIR}"
+RUN apk add openssl ncurses-libs
 
 # System settings
 WORKDIR /app
+RUN chown nobody /app
 
-# Everything from this line onwards will run in the context of the unprivileged user.
-USER "${USER}"
-WORKDIR "${APP_DIR}"
+# set runner ENV
+ENV MIX_ENV=prod
 
 # Copy binaries
-COPY --from=build --chown="${USER}":"${USER}" /app/_build/prod/rel/default ./
+COPY --from=build --chown=nobody:root /app/_build/${MIX_ENV}/rel/default ./
+
+USER nobody
 
 EXPOSE 1965
 ENTRYPOINT ["./bin/default"]

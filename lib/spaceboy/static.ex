@@ -27,7 +27,10 @@ defmodule Spaceboy.Static do
   def render(%Conn{params: %{path: path}} = conn, opts \\ []) do
     opts = normalize(opts)
 
-    if File.dir?(Path.join(opts[:root] ++ path)) do
+    (opts[:root] ++ path)
+    |> Path.join()
+    |> File.dir?()
+    |> if do
       render_dir(conn, opts)
     else
       render_file(conn, opts)
@@ -50,8 +53,7 @@ defmodule Spaceboy.Static do
         files =
           fs_path
           |> File.ls!()
-          |> Enum.map(&"=> /#{Path.join(opts[:prefix] ++ path)}/#{&1}")
-          |> Enum.join("\n")
+          |> Enum.map_join("\n", &"=> /#{Path.join(opts[:prefix] ++ path)}/#{&1}")
 
         Controller.gemini(conn, dir_template(path, files))
 
