@@ -114,12 +114,13 @@ defmodule Spaceboy.MixProject do
         Spaceboy.Middleware.Telemetry
       ],
       Utils: [
+        Spaceboy.Static,
+        Spaceboy.Robots,
         Spaceboy.PeerCert
       ],
       Internals: [
         Spaceboy.Header,
-        Spaceboy.Specification,
-        Spaceboy.Static
+        Spaceboy.Specification
       ]
     ]
   end

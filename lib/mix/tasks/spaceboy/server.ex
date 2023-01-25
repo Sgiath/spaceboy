@@ -11,7 +11,7 @@ defmodule Mix.Tasks.Spaceboy.Server do
 
   For example, to run `spaceboy.server` without recompiling:
 
-      mix phx.server --no-compile
+      mix spaceboy.server --no-compile
 
   The `--no-halt` flag is automatically added.
   """

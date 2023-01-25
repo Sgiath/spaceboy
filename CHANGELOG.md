@@ -1,5 +1,9 @@
 # Changelog
 
+## unreleased
+
+- Fix documentation
+
 ## v0.3.1
 
 - Update dependencies
