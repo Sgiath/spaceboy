@@ -73,7 +73,7 @@ defmodule Spaceboy.Specification do
 
   defp allowed_port(%URI{port: nil} = data, 1965), do: {:ok, data}
   defp allowed_port(%URI{port: port} = data, port), do: {:ok, data}
-  defp allowed_port(%URI{}, _port), do: {:error, 53, "Incorect port number"}
+  defp allowed_port(%URI{}, _port), do: {:error, 53, "Incorrect port number"}
 
   defp allowed_hosts(%URI{} = data, nil), do: {:ok, data}
   defp allowed_hosts(%URI{} = data, []), do: {:ok, data}

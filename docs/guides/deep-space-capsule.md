@@ -20,7 +20,7 @@ is installed on your hosting machine. So here is the process:
     ```
 
 * Add your .onion hostname to your self-signed certificate. If you are using
-  build-in command `mix spaceboy.gen.cert` you can do it by edditing
+  build-in command `mix spaceboy.gen.cert` you can do it by editing
   `priv/ssl/openssl.cnf` - change this lines:
 
     ```cnf

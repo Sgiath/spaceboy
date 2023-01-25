@@ -19,7 +19,7 @@ defmodule Spaceboy.Conn do
     * `:query_string` - query string as received from client
     * `:peer_cert` - client certificate
 
-  ## Fetchabel fields
+  ## Fetchable fields
 
   These fields are not populated until they are fetched manually.
 
@@ -99,7 +99,7 @@ defmodule Spaceboy.Conn do
   end
 
   @doc ~S"""
-  Add function to be run righ before the response is actually send.
+  Add function to be run right before the response is actually send.
 
   Multiple functions will get executed in LIFO order.
   """

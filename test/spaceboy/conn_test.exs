@@ -24,7 +24,7 @@ defmodule SpaceboyTest.Conn do
       assert conn.assigns[:test2] == :test2
     end
 
-    test "execute corect order" do
+    test "execute correct order" do
       conn =
         %Conn{}
         |> Conn.register_before_send(&Conn.assign(&1, :test, :test1))
@@ -35,7 +35,7 @@ defmodule SpaceboyTest.Conn do
     end
   end
 
-  describe "add assings" do
+  describe "add assigns" do
     test "one key" do
       conn = Conn.assign(%Conn{}, :test, :test)
 

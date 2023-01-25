@@ -35,13 +35,13 @@ defmodule Spaceboy.Middleware.Logger do
         stop = System.monotonic_time()
         diff = System.convert_time_unit(stop - start, :native, :microsecond)
 
-        ["Sent ", Integer.to_string(header.code), " in ", formated_diff(diff)]
+        ["Sent ", Integer.to_string(header.code), " in ", formatted_diff(diff)]
       end)
 
       conn
     end)
   end
 
-  defp formated_diff(diff) when diff > 1000, do: [diff |> div(1000) |> Integer.to_string(), "ms"]
-  defp formated_diff(diff), do: [Integer.to_string(diff), "µs"]
+  defp formatted_diff(diff) when diff > 1000, do: [diff |> div(1000) |> Integer.to_string(), "ms"]
+  defp formatted_diff(diff), do: [Integer.to_string(diff), "µs"]
 end

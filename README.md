@@ -21,7 +21,7 @@ you can use as starting point.
   - [-] guides and instructions
 - [x] advanced work with client certificates
 - [x] telemetry
-- [x] templating support
+- [x] template support
   - [x] Gemini files
   - [x] ANSI files (maybe?)
   - [x] other MIME types?
@@ -39,7 +39,7 @@ at night.
 
 If you have any code you would like to include in the framework feel free to
 send me patch at [sgiath@sgiath.dev](mailto:sgiath@sgiath.dev). And again don't
-expect I will answer quickly. Please send patches as attachements not in
+expect I will answer quickly. Please send patches as attachments not in
 the email body (you will increase the chance I will be able to apply the patch
 easily).
 

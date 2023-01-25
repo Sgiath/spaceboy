@@ -2,7 +2,7 @@ defmodule Spaceboy.Router do
   @moduledoc ~S"""
   Router implementation for Spaceboy server.
 
-  Router is technically a `Spaceboy.Middleware` but it is so havily customized
+  Router is technically a `Spaceboy.Middleware` but it is so heavily customized
   that you would not recognize it. But of course you don't have to use this
   helper module and implement it from scratch as `Spaceboy.Middleware`.
 

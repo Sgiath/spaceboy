@@ -105,12 +105,12 @@ defmodule SpaceboyTest.Specification do
       assert message == "URI cannot contain user info"
     end
 
-    test "not mathing port" do
+    test "not matching port" do
       opts = [port: 1965]
       {:error, status, message} = Specification.check("gemini://localhost:1966/\r\n", opts)
 
       assert status == 53
-      assert message == "Incorect port number"
+      assert message == "Incorrect port number"
     end
 
     test "wrong default port" do
@@ -118,7 +118,7 @@ defmodule SpaceboyTest.Specification do
       {:error, status, message} = Specification.check("gemini://localhost/\r\n", opts)
 
       assert status == 53
-      assert message == "Incorect port number"
+      assert message == "Incorrect port number"
     end
 
     test "not allowed host" do

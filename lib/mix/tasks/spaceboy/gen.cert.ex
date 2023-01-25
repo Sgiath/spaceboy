@@ -10,7 +10,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   even now you can use `--ed25519` option in this task.
 
   When first used it copies default `openssl.cnf` to your `priv/ssl/` directory
-  and generates self-sgined certificate for `localhost` and `127.0.0.1`. If you
+  and generates self-signed certificate for `localhost` and `127.0.0.1`. If you
   want certificate for different hosts and IPs you can edit the generated
   `priv/ssl/openssl.cnf` file manually, generate new certificate and it will use
   those values instead.
@@ -71,7 +71,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
       IO.puts("""
       \n#{IO.ANSI.yellow()}#{IO.ANSI.bright()}# OpenSSL Config#{IO.ANSI.reset()}
       Created default openssl config file at #{path(@cnf_path)}
-      It won't be overwriten so you can edit it and it will be used on subsequent cert
+      It won't be overwritten so you can edit it and it will be used on subsequent cert
       generations.
       """)
     end

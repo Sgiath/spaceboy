@@ -1,6 +1,6 @@
 defmodule Spaceboy.Server do
   @moduledoc ~S"""
-  Main configuration for your Spaceboy server. Roughly equivalet to
+  Main configuration for your Spaceboy server. Roughly equivalent to
   `Phoenix.Endpoint`
 
   ## TLS certificate and configuration
@@ -24,7 +24,7 @@ defmodule Spaceboy.Server do
   ```
 
   or when starting your server in Application module (in case you need
-  programatically controlled configuration):
+  programmatically controlled configuration):
 
   ```elixir
   def start(_type, _args) do

@@ -2,8 +2,8 @@ defmodule Spaceboy.Controller do
   @moduledoc ~S"""
   Controllers group common functionality and are pointed to by routers.
 
-  Spaceboy controllers are verys similar to Phoenix ones, but unlike Phoenix
-  there is no concept of a seperate "view" module.
+  Spaceboy controllers are very similar to Phoenix ones, but unlike Phoenix
+  there is no concept of a separate "view" module.
 
   Controllers are related to Connections, and any module that `use`s this one
   automatically imports `Spaceboy.Conn`.
@@ -91,7 +91,7 @@ defmodule Spaceboy.Controller do
   @doc ~S"""
   Set input response
   """
-  @spec input(conn :: Conn.t(), promt :: String.t()) :: Conn.t()
+  @spec input(conn :: Conn.t(), prompt :: String.t()) :: Conn.t()
   def input(%Conn{} = conn, prompt) do
     Conn.resp(conn, Header.input(prompt))
   end

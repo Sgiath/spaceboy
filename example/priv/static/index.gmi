@@ -6,7 +6,7 @@
 ## Second level header
 
 * This is some list
-* And second bulletpoint
+* And second bullet-point
 
 ## Some more links
 

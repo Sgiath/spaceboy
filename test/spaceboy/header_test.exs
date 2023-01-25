@@ -227,15 +227,15 @@ defmodule SpaceboyTest.Header do
       assert header.meta == nil
     end
 
-    test "certificate_not_authorised", %{prompt: prompt} do
-      header = Header.certificate_not_authorised(prompt)
+    test "certificate_not_authorized", %{prompt: prompt} do
+      header = Header.certificate_not_authorized(prompt)
 
       assert header.code == 61
       assert header.meta == prompt
     end
 
-    test "certificate_not_authorised no prompt" do
-      header = Header.certificate_not_authorised()
+    test "certificate_not_authorized no prompt" do
+      header = Header.certificate_not_authorized()
 
       assert header.code == 61
       assert header.meta == nil

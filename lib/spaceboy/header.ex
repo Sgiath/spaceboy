@@ -140,8 +140,8 @@ defmodule Spaceboy.Header do
     do: %__MODULE__{code: 60, meta: prompt}
 
   @doc category: :certificate
-  @spec certificate_not_authorised(prompt :: String.t() | nil) :: t
-  def certificate_not_authorised(prompt \\ nil) when is_nil(prompt) or is_binary(prompt),
+  @spec certificate_not_authorized(prompt :: String.t() | nil) :: t
+  def certificate_not_authorized(prompt \\ nil) when is_nil(prompt) or is_binary(prompt),
     do: %__MODULE__{code: 61, meta: prompt}
 
   @doc category: :certificate
