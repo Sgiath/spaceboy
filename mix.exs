@@ -7,7 +7,7 @@ defmodule Spaceboy.MixProject do
     [
       app: :spaceboy,
       version: @version,
-      elixir: "~> 1.13",
+      elixir: "~> 1.14",
       consolidate_protocols: Mix.env() != :test,
       deps: deps(),
       package: package(),
@@ -38,12 +38,13 @@ defmodule Spaceboy.MixProject do
       {:typed_struct, "~> 0.3"},
 
       # Optional
-      {:jason, "~> 1.3", optional: true},
-      {:telemetry, "~> 1.1", optional: true},
+      {:jason, "~> 1.4", optional: true},
+      {:telemetry, "~> 1.2", optional: true},
 
       # Dev deps
       {:credo, "~> 1.6", only: :dev, runtime: false},
-      {:ex_doc, "~> 0.28", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.29", only: :dev, runtime: false},
+      {:mix_test_watch, "~> 1.1", only: :dev, runtime: false}
     ]
   end
 
