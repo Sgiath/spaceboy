@@ -17,7 +17,7 @@
           packages = with pkgs; [
             elixir
             git
-            autoreconfHook
+            openssl
           ];
 
           env = {

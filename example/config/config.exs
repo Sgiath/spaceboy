@@ -10,4 +10,4 @@ config :mime, :types, %{
 }
 
 # Load env specific config
-import_config "#{Mix.env()}.exs"
+import_config "#{config_env()}.exs"

@@ -3,9 +3,7 @@ defmodule Example.Application do
 
   @impl Application
   def start(_type, _args) do
-    children = [
-      Example.Server
-    ]
+    children = [Example.Server]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Example.Supervisor)
   end
