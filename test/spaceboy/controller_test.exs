@@ -26,7 +26,7 @@ defmodule SpaceboyTest.Controller do
 
     assert conn.header.code == 20
     assert conn.header.meta =~ "application/json"
-    assert conn.body == Jason.encode!(body)
+    assert conn.body == JSON.encode!(body)
   end
 
   test "input response" do

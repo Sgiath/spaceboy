@@ -1,8 +1,11 @@
 # Changelog
 
-## unreleased
+## v0.3.2
 
 - Fix documentation
+- Update to Elixir 1.18
+- Update dependencies
+- Add Nix Flake dev setup
 
 ## v0.3.1
 

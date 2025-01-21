@@ -63,21 +63,12 @@ defmodule Spaceboy.Controller do
     Conn.resp(conn, Header.success(), content)
   end
 
-  if Code.ensure_loaded?(Jason) do
-    @doc ~S"""
-    Set map as JSON response
-
-    This function is only defined if you specifically install optional `Jason`
-    dependency. This is only place where `Jason` library is used and arguably it
-    is not too common function so it is optional.
-
-        {:jason, "~> 1.2"},
-
-    """
-    @spec json(conn :: Conn.t(), content :: map()) :: Conn.t()
-    def json(%Conn{} = conn, content) when is_map(content) do
-      Conn.resp(conn, Header.success("application/json"), Jason.encode!(content))
-    end
+  @doc ~S"""
+  Set map as JSON response
+  """
+  @spec json(conn :: Conn.t(), content :: map()) :: Conn.t()
+  def json(%Conn{} = conn, content) when is_map(content) do
+    Conn.resp(conn, Header.success("application/json"), JSON.encode!(content))
   end
 
   @doc ~S"""

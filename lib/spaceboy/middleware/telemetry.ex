@@ -44,7 +44,7 @@ if Code.ensure_loaded?(:telemetry) do
     def init(opts) do
       {event_prefix, opts} = Keyword.pop(opts, :event_prefix)
 
-      unless event_prefix do
+      if is_nil(event_prefix) do
         raise ArgumentError, ":event_prefix is required"
       end
 

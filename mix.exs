@@ -1,20 +1,20 @@
 defmodule Spaceboy.MixProject do
   use Mix.Project
 
-  @version "0.3.1"
+  @version "0.3.2"
 
   def project do
     [
       app: :spaceboy,
       version: @version,
-      elixir: "~> 1.14",
+      elixir: "~> 1.18",
       consolidate_protocols: Mix.env() != :test,
       deps: deps(),
       package: package(),
 
       # Docs
       name: "Spaceboy",
-      source_url: "https://git.sr.ht/~sgiath/spaceboy",
+      source_url: "https://github.com/Sgiath/spaceboy",
       homepage_url: "https://hexdocs.pm/spaceboy/",
       description: """
       Spaceboy - Gemini server framework for Elixir
@@ -38,13 +38,13 @@ defmodule Spaceboy.MixProject do
       {:typed_struct, "~> 0.3"},
 
       # Optional
-      {:jason, "~> 1.4", optional: true},
-      {:telemetry, "~> 1.2", optional: true},
+      {:telemetry, "~> 1.3", optional: true},
 
       # Dev deps
-      {:credo, "~> 1.6", only: :dev, runtime: false},
-      {:ex_doc, "~> 0.29", only: :dev, runtime: false},
-      {:mix_test_watch, "~> 1.1", only: :dev, runtime: false}
+      {:ex_check, "~> 0.16", only: :dev, runtime: false},
+      {:credo, "~> 1.7", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.36", only: :dev, runtime: false},
+      {:mix_test_watch, "~> 1.2", only: :dev, runtime: false}
     ]
   end
 
@@ -53,8 +53,8 @@ defmodule Spaceboy.MixProject do
       maintainers: ["Sgiath <sgiath@sgiath.dev>"],
       licenses: ["WTFPL"],
       links: %{
-        "SourceHut project" => "https://sr.ht/~sgiath/spaceboy/",
-        "Gemini specs" => "https://gemini.circumlunar.space/"
+        "GitHub" => "https://github.com/Sgiath/spaceboy",
+        "Gemini specs" => "https://geminiprotocol.net"
       }
     ]
   end
@@ -67,12 +67,12 @@ defmodule Spaceboy.MixProject do
       ],
       main: "overview",
       formatters: ["html"],
-      source_url_patter: "https://git.sr.ht/~sgiath/spaceboy/tree/master/item/%{path}#L%{line}",
+      source_url_patter: "https://github.com/Sgiath/spaceboy/blob/master/%{path}#L%{line}",
       extra_section: "Guides",
       extras: extras(),
       groups_for_extras: groups_for_extras(),
       groups_for_modules: groups_for_modules(),
-      groups_for_functions: groups_for_functions(),
+      groups_for_docs: groups_for_functions(),
       nest_modules_by_prefix: [
         Spaceboy.Middleware
       ],

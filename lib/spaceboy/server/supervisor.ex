@@ -54,7 +54,7 @@ defmodule Spaceboy.Server.Supervisor do
   end
 
   defp check_certs(opts) do
-    unless File.exists?(opts[:certfile]) and File.exists?(opts[:keyfile]) do
+    if not (File.exists?(opts[:certfile]) and File.exists?(opts[:keyfile])) do
       IO.puts("""
       #{IO.ANSI.red()}
       \nTLS certificate and private key at location "#{opts[:certfile]}" doesn't exists!

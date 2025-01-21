@@ -65,7 +65,7 @@ defmodule Mix.Tasks.Spaceboy.Gen.Cert do
   defp copy_cnf do
     File.mkdir_p(@root_path)
 
-    unless File.exists?(@cnf_path) do
+    if not File.exists?(@cnf_path) do
       File.cp(@cnf_default, @cnf_path)
 
       IO.puts("""

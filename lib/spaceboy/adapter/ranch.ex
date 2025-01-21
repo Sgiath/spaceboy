@@ -93,7 +93,7 @@ defmodule Spaceboy.Adapter.Ranch do
 
   @impl GenServer
   def terminate(_reason, state) do
-    unless is_nil(state[:socket]) do
+    if not is_nil(state[:socket]) do
       :ranch_ssl.close(state[:socket])
     end
   end

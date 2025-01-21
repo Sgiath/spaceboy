@@ -1,5 +1,7 @@
 defmodule Spaceboy.Conn.Unfetched do
-  @moduledoc false
+  @moduledoc """
+  A struct used as default on unfetched fields.
+  """
   @moduledoc authors: ["Sgiath <sgiath@sgiath.dev>"]
 
   use TypedStruct
