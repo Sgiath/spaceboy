@@ -26,6 +26,7 @@ defmodule Spaceboy.Specification do
          %URI{} = data <- URI.parse(data),
          {:ok, data} <- scheme(data),
          {:ok, data} <- no_user_info(data),
+         {:ok, data} <- no_fragment(data),
          {:ok, data} <- allowed_port(data, opts[:port]),
          {:ok, data} <- allowed_hosts(data, opts[:allowed_hosts]) do
       {:ok, data}
@@ -70,6 +71,9 @@ defmodule Spaceboy.Specification do
 
   defp no_user_info(%URI{userinfo: nil} = data), do: {:ok, data}
   defp no_user_info(_data), do: {:error, "URI cannot contain user info"}
+
+  defp no_fragment(%URI{fragment: nil} = data), do: {:ok, data}
+  defp no_fragment(_data), do: {:error, "URI cannot contain fragment"}
 
   defp allowed_port(%URI{port: nil} = data, 1965), do: {:ok, data}
   defp allowed_port(%URI{port: port} = data, port), do: {:ok, data}

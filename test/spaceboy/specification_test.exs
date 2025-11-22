@@ -128,5 +128,23 @@ defmodule SpaceboyTest.Specification do
       assert status == 53
       assert message == "Host example.com is not allowed"
     end
+
+    test "fragment not allowed" do
+      {:error, message} = Specification.check("gemini://localhost/#fragment\r\n")
+
+      assert message == "URI cannot contain fragment"
+    end
+
+    test "invalid utf8" do
+      {:error, message} = Specification.check("gemini://localhost/" <> <<0xFF>> <> "\r\n")
+
+      assert message == "URL contains not valid characters"
+    end
+
+    test "missing scheme" do
+      {:error, message} = Specification.check("localhost/\r\n")
+
+      assert message == "Missing scheme"
+    end
   end
 end

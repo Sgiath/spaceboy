@@ -1,6 +1,5 @@
 defmodule Spaceboy.Server.Supervisor do
   @moduledoc false
-
   use Supervisor
 
   require Logger
@@ -39,11 +38,25 @@ defmodule Spaceboy.Server.Supervisor do
     otp_app
     |> Application.get_env(module, [])
     |> Keyword.put(:server, module)
-    |> Keyword.put(:adapter, Spaceboy.Adapter.Ranch)
+    |> Keyword.put_new(:adapter, default_adapter())
     |> Keyword.put_new(:port, 1965)
     |> Keyword.put_new(:allowed_hosts, [])
     |> Keyword.put_new(:certfile, "priv/ssl/cert.pem")
     |> Keyword.put_new(:keyfile, "priv/ssl/key.pem")
+  end
+
+  defp default_adapter do
+    cond do
+      Code.ensure_loaded?(Spaceboy.Adapter.Ranch) ->
+        Spaceboy.Adapter.Ranch
+
+      Code.ensure_loaded?(Spaceboy.Adapter.ThousandIsland) ->
+        Spaceboy.Adapter.ThousandIsland
+
+      true ->
+        raise ArgumentError,
+              "No adapter found! Please add :ranch or :thousand_island to your dependencies."
+    end
   end
 
   defp log_access_url(mod, opts) do

@@ -32,7 +32,7 @@ defmodule Spaceboy.Middleware.RequestId do
   def init(opts), do: opts
 
   @impl Spaceboy.Middleware
-  def call(conn, _opts) do
+  def call(%Conn{} = conn, _opts) do
     request_id = generate_request_id()
 
     Logger.metadata(request_id: request_id)

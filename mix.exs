@@ -33,9 +33,12 @@ defmodule Spaceboy.MixProject do
   defp deps do
     [
       # Required
-      {:ranch, "~> 2.1"},
       {:mime, "~> 2.0"},
       {:typed_struct, "~> 0.3"},
+
+      # Adapters
+      {:ranch, "~> 2.0", optional: true},
+      {:thousand_island, "~> 1.0", optional: true},
 
       # Optional
       {:telemetry, "~> 1.3", optional: true},
@@ -43,8 +46,8 @@ defmodule Spaceboy.MixProject do
       # Dev deps
       {:ex_check, "~> 0.16", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: :dev, runtime: false},
-      {:ex_doc, "~> 0.36", only: :dev, runtime: false},
-      {:mix_test_watch, "~> 1.2", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.39", only: :dev, runtime: false},
+      {:mix_test_watch, "~> 1.4", only: :dev, runtime: false}
     ]
   end
 

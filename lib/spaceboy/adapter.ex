@@ -2,7 +2,7 @@ defmodule Spaceboy.Adapter do
   @moduledoc false
 
   @callback child_spec(opts :: Keyword.t()) :: map()
-  @callback send(pid(), String.t(), String.t() | nil) :: :ok
-  @callback send_file(pid(), String.t(), Path.t()) :: :ok
-  @callback disconnect(pid()) :: :ok
+  @callback send(ref :: any(), header :: String.t(), body :: String.t() | nil) :: :ok
+  @callback send_file(ref :: any(), header :: String.t(), file :: Path.t()) :: :ok
+  @callback disconnect(ref :: any()) :: :ok
 end

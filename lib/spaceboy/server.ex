@@ -45,6 +45,8 @@ defmodule Spaceboy.Server do
 
   ### Other options
 
+    * `:adapter` adapter to use for the server. Defaults to `Spaceboy.Adapter.Ranch`
+      if available, otherwise `Spaceboy.Adapter.ThousandIsland`.
     * `:port` port on which the server listens on.
     * `:allowed_hosts` this option dictates which hosts the server considers
       valid. By default it is empty list which means the check is skipped and any

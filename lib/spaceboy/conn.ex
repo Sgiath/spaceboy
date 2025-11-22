@@ -94,6 +94,7 @@ defmodule Spaceboy.Conn do
     # Connection fields
     field :assigns, Keyword.t(), default: []
     field :owner, pid()
+    field :adapter_ref, any()
     field :halted, boolean(), default: false
     field :state, state(), default: :unset
   end
